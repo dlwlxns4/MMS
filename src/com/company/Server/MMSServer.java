@@ -31,9 +31,9 @@ public class MMSServer {
     // -------------------------------------------------------------------------------
     // -------------------------------------------------------------------------------
     static final int INSERT_ACCOUNT = 1, LOGIN = 2, LOGOUT = 3, CHATTING = 4, NEWCUSTOMER = 8, UPDATECUSTOMER = 9, DELETECUSTOMER = 10, ERROR = 15;
-    static final int ADD_PRODUCT =5;
-    static final int UPDATE_PRODUCT =6;
-    static final int DELETE_PRODUCT = 7;
+    static final int ADD_PRODUCT =5; // 상품 등록
+    static final int UPDATE_PRODUCT =6; // 상품 수정
+    static final int DELETE_PRODUCT = 7; // 상품 삭제
     static final int ORDER = 11; // 주문 테이블 갱신
     static final int ORDERHISTORY = 16; // 주문 내역 테이블 갱신
     static final int PAYTRY = 17; // 구매 시도
@@ -195,7 +195,7 @@ public class MMSServer {
                             logger.info("id :" + id + " logout");
                             closeDB();
                             break;
-                        case ADD_PRODUCT:
+                        case ADD_PRODUCT: // 상품 등록
                             connectDB();
                             pstmt = conn.prepareStatement(m.getMsg());
                             if (pstmt.executeUpdate() != 0) {
@@ -205,7 +205,7 @@ public class MMSServer {
 
                             break; //Add
 
-                        case UPDATE_PRODUCT:
+                        case UPDATE_PRODUCT: // 상품 수정
                             connectDB();
                             pstmt = conn.prepareStatement(m.getMsg());
                             if (pstmt.executeUpdate() != 0) {
@@ -213,7 +213,7 @@ public class MMSServer {
                                 closeDB();
                             }
                             break;
-                        case DELETE_PRODUCT:
+                        case DELETE_PRODUCT: // 상품 삭제
                             connectDB();
                             System.out.println("삭제에 성공했나?");
                             pstmt =conn.prepareStatement(m.getMsg());
