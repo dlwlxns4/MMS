@@ -305,16 +305,12 @@ public class MMSServer {
                             }
                             closeDB();
                             break;
-
-
                     }
-
                 } catch (IOException | SQLException e) {
                     e.printStackTrace();
                     closeDB();
                     status = false;
                 }
-
             }
             this.interrupt();
             logger.info(this.getName() + " 종료됨!!");
