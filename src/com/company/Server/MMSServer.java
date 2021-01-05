@@ -225,7 +225,7 @@ public class MMSServer {
 
                             break;
 
-                        case ORDER :
+                        case ORDER : // 클라이언틀에서 주문 요청 시 주문 내역을 업데이트 + 해당 주문의 ordercode 저장
                             connectDB();
                             try {
                                 pstmt = conn.prepareStatement(m.getMsg());
@@ -245,13 +245,13 @@ public class MMSServer {
                             closeDB();
                             break;
 
-                        case PAYTRY :
+                        case PAYTRY : // 클라이언트가 결제하기 버튼을 눌렀을 경우 물품 재고가 구매를 원하는 개수보다 많은지 여부에 따른 반환 값 메세지로 전송
                             connectDB();
                             str = m.getMsg().split("@");
                             int cnt = Integer.parseInt(str[1]); // 구매 예정인 즉, 업데이트 할 품목 개수
                             System.out.println("품목개수 : " + cnt);
                             boolean canBuy = true;
-                            String str1[] = str[0].split("/");
+                            String str1[] = str[0].split("/"); // 3쌍(업데이트 될 수량, 구매 수량, 상품 코드)이 세트이며 cnt 즉, 물품 개수만큼 반복해 재고 검사
                             for(int i=1; i<=cnt; i++) {
                                 try {
                                     sql = "select * from Product where pr_code = ?";
@@ -260,9 +260,9 @@ public class MMSServer {
                                     System.out.println("코드번호 : " + Integer.parseInt(str1[i*3-1]));
                                     rs = pstmt.executeQuery();
 
-                                    if(rs.next()) {
+                                    if(rs.next()) { // 순회하며 재고와 구매 수량 비교 후 canBuy의 boolean 값 결정
                                         if(rs.getInt("amount") < Integer.parseInt(str1[i*3-2])) {
-                                            System.out.println("품목별 재고 : " + rs.getInt("pr_code"));
+                                            System.out.println("품목별 재고 : " + rs.getInt("amount"));
                                             canBuy = false;
                                         }
                                     }
@@ -273,7 +273,7 @@ public class MMSServer {
 
                             System.out.println(canBuy);
 
-                            if(canBuy) {
+                            if(canBuy) { // 재고가 충분해 구매가 가능한 경우 상품개수 업데이트 하고 Order내역과 OrderHistory내역, Customer 테이블의 정보를 갱신할 수 있도록 클라이언트에 메세지 전달
                                 for(int i=1; i<=cnt; i++) {
                                     try {
                                         sql = "update Product set amount = ? where pr_code = ?";
@@ -286,15 +286,15 @@ public class MMSServer {
                                         e.printStackTrace();
                                     }
                                 }
-                                msgSendAll(gson.toJson(new Message(m.getId(), "", "", ORDERCOMPLETE))); // 고객 아이디로 보내기
+                                msgSendAll(gson.toJson(new Message(m.getId(), "", "", ORDERCOMPLETE))); // 구매 고객 아이디로 보내기 --> 주문 성공 메세지
                             }
-                            else msgSendAll(gson.toJson(new Message(m.getId(), "", "", ORDERFAIL))); // 고객 아이디로 보내기
+                            else msgSendAll(gson.toJson(new Message(m.getId(), "", "", ORDERFAIL))); // 구매 고객 아이디로 보내기 --> 제고 부족으로 인한 주문 실패 메세지
 
                             System.out.println("서버에서 아이디는 : " + m.getId());
                             closeDB();
                             break;
 
-                        case ORDERHISTORY :
+                        case ORDERHISTORY : // 클라이언트에서 주문 상세 내역 쿼리문 실행 요청 시 msg에 해당하는 쿼리문 실행
                             connectDB();
                             str = m.getMsg().split("/");
                             try {

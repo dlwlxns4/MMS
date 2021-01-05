@@ -104,7 +104,7 @@ public class mmsListener {
                 ProgramManager.getInstance().setCustomerManageState();
             }
         });
-        panel.shoppingButton.addActionListener(e -> {
+        panel.shoppingButton.addActionListener(e -> { // 메인패널에서 쇼핑 버튼 누르는 경우 쇼핑 뷰 띄움
             ShoppingView shoppingView = ViewManager.getInstance().getShoppingView();
             shoppingView.setVisible(true);
             if(!ViewManager.getInstance().isShoppingViewOpen())
@@ -368,30 +368,17 @@ public class mmsListener {
 
 
 
+    // 쇼핑 뷰에서 이뤄진 이벤트 처리
     public void shoppingViewListener(ShoppingView frame){
 
-        /*
-        for (ActionListener al : frame.btnEnter.getActionListeners()) {
-            frame.btnEnter.removeActionListener(al);
-        }
-        for (ActionListener al : frame.btnEnroll.getActionListeners()) {
-            frame.btnEnter.removeActionListener(al);
-        }
-        for (ActionListener al : frame.btnPay.getActionListeners()) {
-            frame.btnEnter.removeActionListener(al);
-        }
-        for (ActionListener al : frame.btnDelete.getActionListeners()) {
-            frame.btnEnter.removeActionListener(al);
-        }*/
-
-        frame.btnEnter.addActionListener(e -> {
+        frame.btnEnter.addActionListener(e -> { // 쇼핑하기 버튼을 처음 눌렀을 경우에 나타나는 고객 정보 입력 창에서 엔터 버튼을 눌렀을 경우 쇼핑 창으로 이동하는 이벤트
 
             String name = frame.txtName.getText();
             String phone = frame.txtPhone.getText();
 
             if(name != null && phone != null) {
                 try {
-                    ProgramManager.getInstance().getShoppingController().refreshData(frame);
+                    ProgramManager.getInstance().getShoppingController().refreshData(frame); // 구매가능한 품목들 화면에 리프레쉬
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 } catch (ClassNotFoundException e2) {
@@ -408,9 +395,9 @@ public class mmsListener {
 
         });
 
-        frame.btnEnroll.addActionListener(e -> {
+        frame.btnEnroll.addActionListener(e -> { // 쇼핑화면에서 장바구니에 원하는 물품을 담을 때(담기 버튼) 행해지는 이벤트
             try {
-                ProgramManager.getInstance().getShoppingController().addMyList(frame);
+                ProgramManager.getInstance().getShoppingController().addMyList(frame); // 쇼핑화면의 MyList 내역에 추가됨
             } catch (SQLException e1) {
                 e1.printStackTrace();
             } catch (ClassNotFoundException e2) {
@@ -418,10 +405,10 @@ public class mmsListener {
             }
         });
 
-        frame.btnPay.addActionListener(e -> {
+        frame.btnPay.addActionListener(e -> { // 쇼핑화면에서 결제하기 버튼을 눌렀을 때 행해지는 이벤트
 
             try {
-                ProgramManager.getInstance().getShoppingController().payment(frame); // 여기를 통과해야 되게끔..
+                ProgramManager.getInstance().getShoppingController().payment(frame); // 구매 msg를 서버로 보내는 함수를 호출
             } catch (SQLException e1) {
                 e1.printStackTrace();
             } catch (ClassNotFoundException e2) {
@@ -429,9 +416,9 @@ public class mmsListener {
             }
         });
 
-        frame.btnDelete.addActionListener(e -> {
+        frame.btnDelete.addActionListener(e -> { // 쇼핑화면에서 삭제하기 버튼을 눌렀을 때 행해지는 이벤트
             try {
-                ProgramManager.getInstance().getShoppingController().deleteMy(frame);
+                ProgramManager.getInstance().getShoppingController().deleteMy(frame); // 가장 최근에 넣은 품목 삭제
             } catch (SQLException e1) {
                 e1.printStackTrace();
             } catch (ClassNotFoundException e2) {

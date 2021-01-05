@@ -10,6 +10,7 @@ public class OrderDTO {
 
     public OrderDTO() { }
 
+    // Order 테이블의 칼럼에 해당하는 속성들
     public OrderDTO(int orderCode, int entryPrice, String cName, String phoneNum, String buyDate) {
         this.orderCode = orderCode;
         this.entryPrice = entryPrice;

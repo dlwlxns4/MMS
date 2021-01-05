@@ -3,6 +3,7 @@ package com.company.View;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
+// 사용하지 않은 클래스
 public class ShoppingLogin extends JFrame {
     JLabel lblName, lblPhone;
     JTextField txtName, txtPhone;

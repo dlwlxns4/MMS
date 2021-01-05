@@ -11,6 +11,7 @@ public class OrderHistoryDTO {
 
     public OrderHistoryDTO() { }
 
+    // OrderHistory 테이블에 해당하는 칼럼 속성들
     public OrderHistoryDTO(int historyId, int orderCode, int prCode, String prName, int prCount, int prPrice) {
         this.historyId = historyId;
         this.orderCode = orderCode;

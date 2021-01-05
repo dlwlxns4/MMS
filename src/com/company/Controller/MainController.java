@@ -119,7 +119,7 @@ public class MainController extends Thread {
                     case 18 : // 주문 성공
                     {
                         System.out.println("클라이언트 체크 : " + "/" + m.getId());
-                        if(m.getId().equals(ProgramManager.getInstance().id)) {
+                        if(m.getId().equals(ProgramManager.getInstance().id)) { // 만약 해당 클라이언트가 서버에서 보낸 메세지의 id에 해당하는 경우
                             ProgramManager.getInstance().getOrderController().OrderItems(ViewManager.getInstance().getShoppingView(), ProgramManager.getInstance().getShoppingController().getTotal()); // 주문, 주문 내역 쿼리 실행
                             ProgramManager.getInstance().getCC().savePoint(ViewManager.getInstance().getShoppingView().txtPhone.getText(), (int)(ProgramManager.getInstance().getShoppingController().getTotal()*0.01)); // 고객 포인트 업데이트
 
@@ -128,7 +128,7 @@ public class MainController extends Thread {
                             catch(Exception e1){}
 
                             try {
-                                ProgramManager.getInstance().getShoppingController().payComplete(ViewManager.getInstance().getShoppingView());
+                                ProgramManager.getInstance().getShoppingController().payComplete(ViewManager.getInstance().getShoppingView()); // 클라이언트의 쇼핑창에 메세지 전달
                             } catch (SQLException e1) {
                                 e1.printStackTrace();
                             } catch (ClassNotFoundException e2) {
@@ -141,9 +141,9 @@ public class MainController extends Thread {
                     }
                     case 19 : // 주문 실패
                     {
-                        if(m.getId().equals(ProgramManager.getInstance().id)) {
+                        if(m.getId().equals(ProgramManager.getInstance().id)) { // 만약 해당 클라이언트가 서버에서 보낸 메세지의 id에 해당하는 경우
                             try {
-                                ProgramManager.getInstance().getShoppingController().payFailed(ViewManager.getInstance().getShoppingView());
+                                ProgramManager.getInstance().getShoppingController().payFailed(ViewManager.getInstance().getShoppingView()); // 클라이언트의 쇼핑창에 메세지 전달
                             } catch (SQLException e1) {
                                 e1.printStackTrace();
                             } catch (ClassNotFoundException e2) {
