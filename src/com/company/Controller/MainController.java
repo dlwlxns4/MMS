@@ -95,17 +95,17 @@ public class MainController extends Thread {
                         ViewManager.getInstance().getChattingView().refreshData(m.getMsg());
                         break;
                     //여기
-                    case 5 :
+                    case 5 : // 등록
                         try {
                             ProgramManager.getInstance().getPC().refreshData();}
                         catch(Exception e1){}
                         break;
-                    case 6 :
+                    case 6 : // 수정
                         try {
                             ProgramManager.getInstance().getPC().refreshData();}
                         catch(Exception e1){}
                         break;
-                    case 7 :
+                    case 7 : // 삭제
                         try {
                             ProgramManager.getInstance().getPC().refreshData();}
                         catch(Exception e1){}

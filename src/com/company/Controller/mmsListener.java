@@ -133,14 +133,14 @@ public class mmsListener {
 
         panel.addButton.addActionListener(e -> {
             addProduct();
-        });
+        }); //상품등록 버튼 리스너
         panel.searchButton.addActionListener(e -> {
             searchProduct(dao, panel.editMode, panel);
             panel.editMode = true;
-        });
+        }); //검색 버튼 리스너
         panel.deleteButton.addActionListener(e -> {
             deleteProduct(dao,panel.editMode,panel, datas);
-        });
+        }); //삭제버튼 리스너
         panel.updateButton.addActionListener(e -> {
             try {
                 updateProduct(datas, dao, ProgramManager.getInstance().getPC().bufferedString);
@@ -149,14 +149,14 @@ public class mmsListener {
             } catch (ClassNotFoundException classNotFoundException) {
                 classNotFoundException.printStackTrace();
             }
-        });
+        }); // 수정버튼 리스너
 
         panel.productTable.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
                     ProgramManager.getInstance().getPC().isClick =true;
-                    ProgramManager.getInstance().getPC().appMain();
+                    ProgramManager.getInstance().getPC().appMain();  //클릭한 상품의 Pr코드 넣기
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 } catch (ClassNotFoundException classNotFoundException) {
@@ -167,10 +167,10 @@ public class mmsListener {
             public void mouseReleased(MouseEvent e) { }
             public void mouseEntered(MouseEvent e) { }
             public void mouseExited(MouseEvent e) { }
-        });
+        }); // 수정버튼에 사용할 마우스 리스너
     } //ProductViewPaneListener
-    //ProductViewPanelListener Method //메소드/////////////////
 
+    //ProductViewPanelListener Method //메소드/////////////////
     ///여기
     public void deleteProduct(ProductDAO dao, boolean editMode, ProductViewPanel panel, ArrayList<ProductDTO> datas){
         String add_msg="";
@@ -179,12 +179,11 @@ public class mmsListener {
             JOptionPane.showMessageDialog(ViewManager.getInstance().getMainView().productViewPanel, " 삭제할 정보를 조회 후 선택해 주세요.");
 
         }else {
-            int prCode = Integer.parseInt(ViewManager.getInstance().getMainView().productViewPanel.tableModel.getValueAt(row, 0).toString());
-            add_msg = add_msg + "delete from Product where pr_code = " + prCode;
+            int prCode = Integer.parseInt(ViewManager.getInstance().getMainView().productViewPanel.tableModel.getValueAt(row, 0).toString()); //삭제하고 곳
+            add_msg = add_msg + "delete from Product where pr_code = " + prCode; //삭제 쿼리문
         }
 
-        ProgramManager.getInstance().getMainController().msgSend(new Message("", "", add_msg, 7));
-
+        ProgramManager.getInstance().getMainController().msgSend(new Message("", "", add_msg, 7)); //쿼리문 메세지 보내기기
         panel.SUDLab.setText("검색 정보 :");
     }//테이블 누르고 삭제
     //여기
@@ -195,17 +194,14 @@ public class mmsListener {
 
             ProductDTO p = dao.getProduct(Integer.parseInt(panel.txtSearch.getText()));
             if (p.getPrCode() != -1) {
-                System.out.println(p.getPrCode());
                 panel.SUDtxt.setText("");
                 panel.SUDtxt.append("코드\t이름\t가격\t위치\t유통기한\t재고\t상태\n" +
                         Integer.toString(p.getPrCode()) + "\t" + p.getPrName() + "\t" + p.getPrice() + "\t" + p.getLocation() + "\t" + p.getExpDate() + "\t" + p.getAmount() + "\t"
                         + p.getState());
-                ;
 
                 editMode = true; //찾았으면 수정,삭제가능
             } else {
 
-                System.out.println(p.getPrCode());
                 panel.SUDtxt.setText("검색하는 코드에 대한 정보가 없음");
             }
 
@@ -221,6 +217,7 @@ public class mmsListener {
         ViewManager.getInstance().getProductCRUDView().drawView();
         ViewManager.getInstance().getProductCRUDView().chk = 1;
     } //CRUD창 추가후 버튼리스너 추가
+
     public void refreshData (ArrayList<ProductDTO> datas, ProductDAO dao, ProductViewPanel panel)throws SQLException, ClassNotFoundException {
 
         datas = dao.getAll();
@@ -240,11 +237,10 @@ public class mmsListener {
                 record[6] = p.getState();
                 panel.tableModel.addRow(record);
 
-                System.out.println("안되지!?");
             }
 
-        }
-    }
+        } // 테이블 초기화후 상품 재등록하기
+    }//refreshData
     public void updateProduct(ArrayList<ProductDTO> datas, ProductDAO dao, int bufferedString ) {
 
         int row = ViewManager.getInstance().getMainView().productViewPanel.productTable.getSelectedRow();
@@ -267,11 +263,11 @@ public class mmsListener {
             String add_msg = "update Product set pr_name = " + "'" + prName + "'" +
                     ",  PRICE = "+ price + ", location = "+ "'" + location +"'" +
                     ", exp_date = "+ "'" + date + "'" + ", amount = "+ amount + ", state = "+ "'" + prstate + "'" + "where pr_code = " + prcode;
+            //update하기 위한 쿼리문
 
 
 
-
-            ProgramManager.getInstance().getMainController().msgSend(new Message("", "", add_msg, 6));
+            ProgramManager.getInstance().getMainController().msgSend(new Message("", "", add_msg, 6)); //메세지 보내기
 
             ViewManager.getInstance().getMainView().productViewPanel.SUDtxt.setText("수정이 완료되었습니다.");
         }
@@ -326,7 +322,7 @@ public class mmsListener {
         frame.completeButton.addActionListener(e -> {
             if(frame.chk==1)
                 try {
-                    addProduct_inCRUD(frame, dao, ViewManager.getInstance().getMainView().productViewPanel.editMode, datas);
+                    addProduct_inCRUD(frame, dao, ViewManager.getInstance().getMainView().productViewPanel.editMode, datas); //상품등록하기
                 }catch (Exception e1){}
         });
     }//productCRUDViewListener
@@ -344,7 +340,7 @@ public class mmsListener {
                 ", " + "'" + CRUDv.locationText.getText() +"'"+
                 ", " + "'" + CRUDv.expDateText.getText() + "'" +
                 ", " + Integer.parseInt(CRUDv.countText.getText()) +
-                ", " + "'"+ prstate + "'"+")";
+                ", " + "'"+ prstate + "'"+")"; // 상품 등록을 위한 쿼리문
 
 
         System.out.println("상품등록 완료");
@@ -353,12 +349,12 @@ public class mmsListener {
         CRUDv.priceText.setText("");
         CRUDv.locationText.setText("");
         CRUDv.expDateText.setText("");
-        CRUDv.countText.setText("");
+        CRUDv.countText.setText(""); // 상품 등록후 공간 초기화 하기
 
 
 
 
-        ProgramManager.getInstance().getMainController().msgSend(new Message("", "", add_msg, 5));
+        ProgramManager.getInstance().getMainController().msgSend(new Message("", "", add_msg, 5)); // 쿼리문 메세지 보내기
 
 
         ViewManager.getInstance().getMainView().productViewPanel.SUDLab.setText("검색 정보 :                                                      ");

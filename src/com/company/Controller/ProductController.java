@@ -20,12 +20,9 @@ import java.util.Calendar;
 
 public class ProductController extends Thread{
     public ProductViewPanel v;
-    public ProductCRUDView CRUDv ;
     ProductDAO dao;
     public ArrayList<ProductDTO> datas;
-    public boolean editMode = false;
     MainView mainView ;
-    Date date ;
     public boolean isClick = false;
     public int bufferedString =-1;
     SimpleDateFormat format = new SimpleDateFormat ( "yyyy년 MM월dd일 HH시mm분");
@@ -47,7 +44,7 @@ public class ProductController extends Thread{
             int row = v.productTable.getSelectedRow();
             bufferedString = Integer.parseInt(v.tableModel.getValueAt(row, 0).toString());
             isClick = false;
-        }
+        } // 클릭시 prCode 가져와주는 로직
     }
 
     public void refreshData() throws SQLException, ClassNotFoundException {
@@ -56,7 +53,7 @@ public class ProductController extends Thread{
         v.tableModel.setNumRows(0); // 다시붙일때 테이블 로우 초기화
         if( datas != null){
 
-            for(ProductDTO p : datas) {
+            for(ProductDTO p : datas) { // 상품 전체 조회
                 record[0] = p.getPrCode();
                 record[1] = p.getPrName();
                 record[2] = p.getPrice();
@@ -67,7 +64,7 @@ public class ProductController extends Thread{
                 v.tableModel.addRow(record);
 
             }
-        }
+        }//상품 초기화후 재등록
     }
 
 
@@ -83,7 +80,7 @@ public class ProductController extends Thread{
 
             Calendar time = Calendar.getInstance();
             String format_time = format.format(time.getTime());
-            ViewManager.getInstance().getMainView().mainViewPanel.timeLabel.setText(format_time);
+            ViewManager.getInstance().getMainView().mainViewPanel.timeLabel.setText(format_time); // 시간을 나타내주는 로직
 
             try {
                 data=dao.getAll();
@@ -94,16 +91,16 @@ public class ProductController extends Thread{
             } //daoGeoAll try
 
             if(data!=null) {
-                for (ProductDTO p : data) {
+                for (ProductDTO p : data) { // 모든상품 검색
                     boolean chk1=false,chk2=false;
 
                     long diff = p.getExpDate().getTime() - now.getTime();
-                    long sec = diff / 1000;
+                    long sec = diff / 1000;  //초 단위로로 변환하기
 
                     if ( sec < 604800) {//시간측정 일주일
                         p.setState("유통기한임박");
                         try {
-                            dao.updateProduct(p);
+                            dao.updateProduct(p); // 상품 업데이트하기 state변경
                         } catch (SQLException throwables) {
                             throwables.printStackTrace();
                         } catch (ClassNotFoundException e) {
@@ -117,7 +114,7 @@ public class ProductController extends Thread{
                     if( p.getAmount() < 10){//재고측정
                         p.setState("재고부족임박");
                         try {
-                            dao.updateProduct(p);
+                            dao.updateProduct(p); // 상품 업데이트하기 state변경
                         } catch (SQLException throwables) {
                             throwables.printStackTrace();
                         } catch (ClassNotFoundException e) {
@@ -133,7 +130,7 @@ public class ProductController extends Thread{
                         if(chk2){
                             p.setState("재고유통기한임박");
                             try {
-                                dao.updateProduct(p);
+                                dao.updateProduct(p); // 상품 업데이트하기 state변경
                             } catch (SQLException throwables) {
                                 throwables.printStackTrace();
                             } catch (ClassNotFoundException e) {
@@ -145,14 +142,14 @@ public class ProductController extends Thread{
                 }
 
             }try {
-                sleep(5000);
+                sleep(5000); // 쓰레드 5초간격으로 실행하기
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
 
-            v.smallAMountArea.setText(txt);
-            v.almostExpiredArea.setText(txt2);
+            v.smallAMountArea.setText(txt); // 유통기한 조금남은 재품TextArea에 붙이기
+            v.almostExpiredArea.setText(txt2); // 재고 조금남은 재품TextArea에 붙이기
             txt="코드\t이름\t가격\t위치\t유통기한\t재고\t상태\n";
             txt2="코드\t이름\t가격\t위치\t유통기한\t재고\t상태\n";
 

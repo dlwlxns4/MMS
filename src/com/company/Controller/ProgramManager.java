@@ -78,12 +78,12 @@ public class ProgramManager {
     public ProductController getPC() throws SQLException, ClassNotFoundException {
         if(PC ==null) PC= new ProductController(ViewManager.getInstance().getMainView().productViewPanel);
         return PC;
-    }
+    } // ProductController 생성하기
 
     public void setCC(CustomerController CC) {
         this.CC = CC;
     }
-    public void setPC(ProductController PC){ this.PC = PC;}
+    public void setPC(ProductController PC){ this.PC = PC;} //ProductController 가져오기
 
 
     public void setMainState(){

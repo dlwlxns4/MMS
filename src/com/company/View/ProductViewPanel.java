@@ -60,6 +60,7 @@ public class ProductViewPanel extends JPanel {
 
         //new ProductController(this);
 
+        //상품검색하는 패널
         menuBarPanel.add(txtSearch);
         menuBarPanel.add(searchButton);
         menuBarPanel.add(addButton);
@@ -67,6 +68,7 @@ public class ProductViewPanel extends JPanel {
         menuBarPanel.add(deleteButton);
         add(menuBarPanel, BorderLayout.PAGE_START);
 
+        //상품테이블과, 유통기한알람 재고알람 스크롤에어리어
         scroll1 = new JScrollPane(productTable);
         scroll2 = new JScrollPane(smallAMountArea);
         scroll3 = new JScrollPane(almostExpiredArea);
@@ -83,11 +85,11 @@ public class ProductViewPanel extends JPanel {
         scroll3.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scroll3.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-        //여기
+
 
         txtAreaPanel.setBounds(800,0,375,640);
 
-        //여기///////
+
 
         SUDtxt.setBounds(10,600,780,35);
         SUDtxt.setEditable(false);

@@ -16,15 +16,16 @@ public class ProductDTO {
     }
 
     public ProductDTO(int prCode, String prName, int price, String location, Date expDate, int amount, String state) {
-        this.prCode = prCode;
-        this.prName = prName;
-        this.price = price;
-        this.location = location;
-        this.expDate = expDate;
-        this.amount = amount;
-        this.state = state;
+        this.prCode = prCode; // Primary key
+        this.prName = prName; // 상품이름
+        this.price = price; // 가격
+        this.location = location; // 위치
+        this.expDate = expDate; // 유통기한
+        this.amount = amount;  // 재고
+        this.state = state; // 상태
     }
 
+    //get,set
     public int getPrCode() {
         return prCode;
     }

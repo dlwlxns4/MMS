@@ -43,53 +43,61 @@ public class ProductCRUDView extends JFrame {
         centerPanel.setSize(400,470);
         centerPanel.setLayout(null);
 
+        //상품코드라벨
         codeLabel.setBounds(10,10,190,50);
         codeLabel.setFont(new Font("", Font.BOLD, 20));
         centerPanel.add(codeLabel);
+        //상품코드텍스트필드
         codeText.setBounds(180,10,190,50);
         codeText.setFont(new Font("", Font.BOLD, 17));
         centerPanel.add(codeText);
 
-
+        //상품이름라벨
         nameLabel.setBounds(10,70,190,50);
         nameLabel.setFont(new Font("", Font.BOLD, 20));
         centerPanel.add(nameLabel);
+        //상품이름텍스트필드
         nameText.setBounds(180,70,190,50);
         nameText.setFont(new Font("", Font.BOLD, 17));
         centerPanel.add(nameText);
 
-
+        //상품가격라벨
         priceLabel.setBounds(10,130,190,50);
         priceLabel.setFont(new Font("", Font.BOLD, 20));
         centerPanel.add(priceLabel);
+        //상품가격텍스트필드
         priceText.setBounds(180,130,190,50);
         priceText.setFont(new Font("", Font.BOLD, 17));
         centerPanel.add(priceText);
 
-
+        //상품위치라벨
         locationLabel.setBounds(10,190,190,50);
         locationLabel.setFont(new Font("", Font.BOLD, 20));
         centerPanel.add(locationLabel);
+        //상품위치텍스트필드
         locationText.setBounds(180,190,190,50);
         locationText.setFont(new Font("", Font.BOLD, 17));
         centerPanel.add(locationText);
 
-
+        //상품유통기한라벨
         expDateLabel.setBounds(10,250,190,50);
         expDateLabel.setFont(new Font("", Font.BOLD, 20));
         centerPanel.add(expDateLabel);
+        //상품유통기한텍스트필드
         expDateText.setBounds(180,250,190,50);
         expDateText.setFont(new Font("", Font.BOLD, 17));
         centerPanel.add(expDateText);
 
-
+        //상품재고라벨
         countLabel.setBounds(10,310,190,50);
         countLabel.setFont(new Font("", Font.BOLD, 20));
         centerPanel.add(countLabel);
+        //상품재고텍스트필드
         countText.setBounds(180,310,190,50);
         countText.setFont(new Font("", Font.BOLD, 17));
         centerPanel.add(countText);
 
+        //완료버튼
         completeButton.setBounds(125, 370, 150,50);
         centerPanel.add(completeButton);
         add(centerPanel,BorderLayout.CENTER);
