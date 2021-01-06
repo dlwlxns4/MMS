@@ -6,12 +6,13 @@ import java.util.Vector;
 
 public class CustomerDAO {
     String jdbcDriver = "com.mysql.cj.jdbc.Driver";
-    String jdbcUrl = "jdbc:mysql://mms.crgsa3qt3jqa.ap-northeast-2.rds.amazonaws.com/mms?user=jaewon&password=wlfkf132";    Connection conn;
+    String jdbcUrl = "jdbc:mysql://mms.crgsa3qt3jqa.ap-northeast-2.rds.amazonaws.com/mms?user=jaewon&password=wlfkf132";
+    Connection conn;
 
     PreparedStatement pstmt;
     ResultSet rs;
 
-    public void connectDB() {
+    public void connectDB() { // 데이터 베이스에 접속
         try {
             Class.forName(jdbcDriver);
             conn = DriverManager.getConnection(jdbcUrl, "jaewon", "wlfkf132");
@@ -20,7 +21,7 @@ public class CustomerDAO {
         }
     }
 
-    public void closeDB() {
+    public void closeDB() { // 데이터 베이스 접속 종료
         try {
             pstmt.close();
             if(rs !=null) rs.close();
@@ -30,7 +31,7 @@ public class CustomerDAO {
         }
     }
 
-    public ArrayList<CustomerDTO> getAll() {
+    public ArrayList<CustomerDTO> getAll() { // Customer 모든 데이터를 조회하여 ArrayList에 저장
         String sql = "select * from Customer";
         connectDB();
 
@@ -53,7 +54,7 @@ public class CustomerDAO {
         return datas;
     }
 
-    public CustomerDTO getCustomer(String phone_num) {
+    public CustomerDTO getCustomer(String phone_num) { // 특정 휴대폰 번호의 고객 데이터 조회하여 저장
         String sql = "select * from Customer where phone_num = ?";
         CustomerDTO c = null;
         connectDB();
@@ -76,7 +77,7 @@ public class CustomerDAO {
         return c;
     }
 
-    public boolean newCustomer(CustomerDTO customer) {
+    public boolean newCustomer(CustomerDTO customer) { // 전달된 데이터 객체를 데이터베이스에 등록
         CustomerDTO c = customer;
         String sql = "insert into Customer(phone_num, c_name, c_point) values(?, ?, ?)";
 
@@ -100,26 +101,7 @@ public class CustomerDAO {
         return false;
     }
 
-//    public boolean delCustomer(String phone_num) {
-//        String sql = "delete from Customer where phone_num = ?";
-//        connectDB();
-//
-//        try {
-//            pstmt = conn.prepareStatement(sql);
-//            pstmt.setString(1, phone_num);
-//
-//            if(pstmt.executeUpdate() != 0) {
-//                closeDB();
-//                return true;
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        closeDB();
-//        return false;
-//    }
-
-    public boolean updateCustomer(CustomerDTO customer, String previousPhoneNum) {
+    public boolean updateCustomer(CustomerDTO customer, String previousPhoneNum) { // 전달된 데이터 객체를 이전 폰 번호로 조회되는 데이터에 업데이트
         CustomerDTO c = customer;
         String sql = "update Customer set phone_num = ?, c_name = ?, c_point = ? where phone_num = ?";
         connectDB();
@@ -143,7 +125,7 @@ public class CustomerDAO {
         return false;
     }
 
-    public boolean updateCustomer(CustomerDTO customer, int point) {
+    public boolean updateCustomer(CustomerDTO customer, int point) { // 전달된 데이터 객체를 전달된 포인트로 업데이트
         CustomerDTO c= customer;
         String sql = "update Customer set c_point = ? where phone_num = ?";
         connectDB();
@@ -152,59 +134,6 @@ public class CustomerDAO {
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, c.getCPoint() + point);
             pstmt.setString(2, c.getPhoneNum());
-            if(pstmt.executeUpdate() != 0) {
-                closeDB();
-                return true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        closeDB();
-        return false;
-
-    }
-
-    public boolean newCustomer(String msg) {
-        connectDB();
-
-        try {
-            pstmt = conn.prepareStatement(msg);
-
-            if(pstmt.executeUpdate() != 0) {
-                closeDB();
-                return true;
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        closeDB();
-        return false;
-    }
-
-    public boolean delCustomer(String msg) {
-        connectDB();
-
-        try {
-            pstmt = conn.prepareStatement(msg);
-
-            if(pstmt.executeUpdate() != 0) {
-                closeDB();
-                return true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        closeDB();
-        return false;
-    }
-
-    public boolean updateCustomer(String msg) {
-        connectDB();
-
-        try {
-            pstmt = conn.prepareStatement(msg);
             if(pstmt.executeUpdate() != 0) {
                 closeDB();
                 return true;

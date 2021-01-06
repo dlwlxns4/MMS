@@ -22,7 +22,7 @@ public class ProductViewPanel extends JPanel {
 
 
 
-    public ProductViewPanel() {
+    public ProductViewPanel() { // 제품 관리 Panel 생성
         setLayout(new BorderLayout());
 
         SUDtxt = new JTextArea();
@@ -56,7 +56,7 @@ public class ProductViewPanel extends JPanel {
 
     }
 
-    public void drawView() throws SQLException, ClassNotFoundException {
+    public void drawView() throws SQLException, ClassNotFoundException { // 제품 관리 Panel 그려주기
 
         //new ProductController(this);
 

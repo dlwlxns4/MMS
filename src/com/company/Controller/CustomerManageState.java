@@ -18,7 +18,7 @@ public class CustomerManageState implements State {
     }
 
     @Override
-    public void drawPanel() {
+    public void drawPanel() { // mainView에 부착된 다른 패널들을 안보이게 하고 customerPanel만 보이게 한다.
         mainView = ViewManager.getInstance().getMainView();
         mainView.orderListViewPanel.setVisible(false);
         mainView.productViewPanel.setVisible(false);
@@ -27,7 +27,7 @@ public class CustomerManageState implements State {
 
 
     @Override
-    public void applyListener() {
+    public void applyListener() { // customerPanel에 리스너를 달아준다.
 
         customerViewPanel = ViewManager.getInstance().getMainView().customerViewPanel;
         mmsListener.getInstance().customerViewPanelListener(customerViewPanel);

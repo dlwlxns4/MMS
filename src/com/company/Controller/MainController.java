@@ -30,8 +30,8 @@ public class MainController extends Thread {
     private Socket s;
 
     // 입출력 스트림
-    private BufferedReader inMsg = null; // 따로 설정 안해도 되나?
-    private PrintWriter outMsg = null;
+    private BufferedReader inMsg = null; // 서버가 보낸 메시지를 읽는 버퍼
+    private PrintWriter outMsg = null; // 서버에 메시지를 보낼 버퍼
 
     private boolean status;
 
@@ -45,17 +45,12 @@ public class MainController extends Thread {
 
     }
 
-    public void connectServer() {
+    public void connectServer() { // 서버에 접속하기
         try {
             s = new Socket("127.0.0.1", 7777);
             logger.log(Level.INFO, "[Client]Server 연결 성공!!");
             inMsg = new BufferedReader(new InputStreamReader(s.getInputStream()));
             outMsg = new PrintWriter(s.getOutputStream(), true);
-
-
-//            m = new Message("", "", "시스템접속", 1);
-//            outMsg.println(gson.toJson(m));
-
 
             thread = new Thread(this);
             thread.start();
@@ -94,27 +89,26 @@ public class MainController extends Thread {
                     case 4 :
                         ViewManager.getInstance().getChattingView().refreshData(m.getMsg());
                         break;
-                    //여기
-                    case 5 : // 등록
+                    case 5 : // 상품 등록
                         try {
                             ProgramManager.getInstance().getPC().refreshData();}
                         catch(Exception e1){}
                         break;
-                    case 6 : // 수정
+                    case 6 : // 상품 수정
                         try {
                             ProgramManager.getInstance().getPC().refreshData();}
                         catch(Exception e1){}
                         break;
-                    case 7 : // 삭제
+                    case 7 : // 상품 삭제
                         try {
                             ProgramManager.getInstance().getPC().refreshData();}
                         catch(Exception e1){}
                         break;
-                    case 8 :
+                    case 8 : // 고객 등록
                         ViewManager.getInstance().getMainView().customerViewPanel.drawTextArea(m.getMsg());
                         break;
-                    case 9 : break;
-                    case 10 : break;
+                    case 9 : break; // 고객 수정
+                    case 10 : break; // 고객 삭제
 
                     case 18 : // 주문 성공
                     {
@@ -154,19 +148,12 @@ public class MainController extends Thread {
                         break;
                     }
 
-                    case 15 :
+                    case 15 : // 에러 메시지
                         LoginViewPanel loginPanel = ViewManager.getInstance().getMainView().loginViewPanel;
                         loginPanel.txtId.setText("");
                         loginPanel.txtPw.setText("");
 
                 }
-
-
-                // MultiChatDat 객체로 데이터 갱신
-//                chatData.refreshData(m.getId() + ">" + m.getMsg() + "\n");
-
-                // 커서를 현재 대화 메세지에 표시
-                //v.msgOut.setCaretPosition(v.msgOut.getDocument().getLength());
             } catch (IOException e) {
                 logger.log(Level.WARNING, "[MultiChatUI]메세지 스트림 종료!!");
             }
@@ -174,7 +161,7 @@ public class MainController extends Thread {
         logger.info("[MultiChatUI]" + thread.getName() + " 메세지 수신 스레드 종료됨!!");
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) { // 서버에 접속하기
         ProgramManager manager = ProgramManager.getInstance();
         manager.getMainController().connectServer();
         manager.setLoginState();

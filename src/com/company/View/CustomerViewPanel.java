@@ -20,7 +20,7 @@ public class CustomerViewPanel extends JPanel {
     public DefaultTableModel dtmodel;
     public Font fnt;
 
-    public CustomerViewPanel() {
+    public CustomerViewPanel() { // 고객 등록 창 생성
 
         // 폰트 설정
         fnt = new Font("Dialog", Font.BOLD, 15);
@@ -51,7 +51,7 @@ public class CustomerViewPanel extends JPanel {
 
     }
 
-    public void drawView() {
+    public void drawView() { // 고객 등록 창 그려주기
 
         setSize(new Dimension(1200,700));
         setLayout(new BorderLayout());
@@ -84,32 +84,16 @@ public class CustomerViewPanel extends JPanel {
 
     }
 
-    public void drawTextArea(String text) {
+    public void drawTextArea(String text) { // 신규 고객 안내 창에 추가될 내용 추가해주기
         taNewCustomer.append(text + "\n");
     }
 
-    public void initDTModel() {
+    public void initDTModel() { // TableModel 초기화 해주기
         dtmodel.setNumRows(0);
     }
 
-    public void addRowToTable(String line[]) {
+    public void addRowToTable(String line[]) { // Table Model에 전달 된 내용으로 새로운 줄 추가
         dtmodel.addRow(line);
-    }
-
-    public void addUpdateButtonListener(ActionListener listener) {
-        updateButton.addActionListener(listener);
-    }
-
-    public void addDeleteButtonListener(ActionListener listener) {
-        deleteButton.addActionListener(listener);
-    }
-
-    public void addSearchButtonListener(ActionListener listener) {
-        searchButton.addActionListener(listener);
-    }
-
-    public void addAddButtonListener(ActionListener listener) {
-        addButton.addActionListener(listener);
     }
 }
 

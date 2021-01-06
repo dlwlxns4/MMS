@@ -9,10 +9,6 @@ public class ShoppingLogin extends JFrame {
     JTextField txtName, txtPhone;
     JButton btnEnter;
 
-    public static void main(String[] args) {
-        new ShoppingLogin().drawView();
-    }
-
     public ShoppingLogin() {
         lblName = new JLabel("이름");
         lblPhone = new JLabel("휴대폰");
@@ -21,7 +17,7 @@ public class ShoppingLogin extends JFrame {
         txtPhone = new JTextField(10);
     }
 
-    public void drawView() {
+    public void drawView() { // 장바구니 뷰 전에 고객 정보 입력하는 뷰 그려주기
         setTitle("Shopping Login");
         setSize(400,550);
         setLayout(null);
@@ -41,9 +37,5 @@ public class ShoppingLogin extends JFrame {
         add(txtPhone);
 
         setVisible(true);
-    }
-
-    public void addEnterButtonListener(ActionListener listener) {
-        btnEnter.addActionListener(listener);
     }
 }

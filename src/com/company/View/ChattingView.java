@@ -6,16 +6,14 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class ChattingView extends JFrame{
-    JPanel chatNamePanel;
-    JLabel chatNameLabel;
-    JPanel msgPanel;
-    public JTextField msgInput;
-    public JButton exitButton;
+    JPanel chatNamePanel; // 고객 이름이 적힌 라벨이 부착될 곳
+    JLabel chatNameLabel; // 고객 이름이 적힌 라벨
+    JPanel msgPanel; // 메시지 내용이 출력될 msgOut이 부착될 곳
+    public JTextField msgInput; // 채팅 텍스트 입력할 곳
+    public JButton exitButton; // 채팅 창 닫기 버튼
     JTextArea msgOut;
 
-    String id;
-
-    public ChattingView() {
+    public ChattingView() { // 채팅 창 생성해주기
         setTitle("::멀티채팅::");
         setLayout(new BorderLayout());
 
@@ -33,7 +31,7 @@ public class ChattingView extends JFrame{
         exitButton = new JButton("닫기");
     }
 
-    public void drawView() {
+    public void drawView() { // 채팅 창 그려주기
 
         chatNamePanel.add(chatNameLabel, BorderLayout.WEST);
         add(chatNamePanel, BorderLayout.PAGE_START);
@@ -53,16 +51,7 @@ public class ChattingView extends JFrame{
         setSize(400,300);
     }
 
-    public void refreshData(String msg) {
+    public void refreshData(String msg) { // 점원들이 전달한 메시지 내용 출력
         msgOut.append(msg + "\n");
-    }
-
-    public static void main(String[] args) {
-        ChattingView cv = new ChattingView();
-    }
-
-    public void addButtonActionListener(ActionListener listener) {
-        exitButton.addActionListener(listener);
-        msgInput.addActionListener(listener);
     }
 }

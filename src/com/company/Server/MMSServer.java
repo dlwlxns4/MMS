@@ -31,6 +31,7 @@ public class MMSServer {
     // -------------------------------------------------------------------------------
     // -------------------------------------------------------------------------------
     static final int INSERT_ACCOUNT = 1, LOGIN = 2, LOGOUT = 3, CHATTING = 4, NEWCUSTOMER = 8, UPDATECUSTOMER = 9, DELETECUSTOMER = 10, ERROR = 15;
+    // 1: 계정 추가, 2: 로그인, 3: 로그아웃, 4: 채팅 메시지, 8: 고객 추가, 9: 고객 수정, 10 : 고객 삭제, 15: 에러 메시지
     static final int ADD_PRODUCT =5; // 상품 등록
     static final int UPDATE_PRODUCT =6; // 상품 수정
     static final int DELETE_PRODUCT = 7; // 상품 삭제
@@ -54,7 +55,7 @@ public class MMSServer {
 
     Logger logger; // 로거 객체 선언
 
-    public void connectDB() {
+    public void connectDB() { // DB연결
         try {
             Class.forName(jdbcDriver);
             System.out.println("드라이버 로드 성공");
@@ -71,7 +72,7 @@ public class MMSServer {
         }
     }
 
-    public void closeDB() {
+    public void closeDB() { // DB 연결 종료
         try {
             pstmt.close();
             if(rs!=null) rs.close();
@@ -81,20 +82,20 @@ public class MMSServer {
         }
     }
 
-    private void start() {
+    private void start() { // 서버 시작
         logger = Logger.getLogger(this.getClass().getName());
 
         try {
-            Collections.synchronizedList(mmsThreadList); // List synchronized 준혁 추가 ...
+            Collections.synchronizedList(mmsThreadList); // 리스트 동기화 하여 관리
             ss = new ServerSocket(7777); // 임의의 포트번호를 통해 서버 소켓 생성
             logger.info("MultiChatServer start");
 
             while (true) {
-                s = ss.accept();
+                s = ss.accept(); // 클라이언트가 접속할 때까지 기다림
 
                 MMSThread chat = new MMSThread();
                 mmsThreadList.add(chat);
-                chat.start();
+                chat.start(); // 클라이언트와 연결 된 쓰레드 동작
             }
 
         } catch (Exception e) {
@@ -103,7 +104,7 @@ public class MMSServer {
         }
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[]) { // 서버 실행
         MMSServer multiChatServer = new MMSServer();
         multiChatServer.start();
     }
@@ -137,16 +138,17 @@ public class MMSServer {
                             msgSendAll(gson.toJson(new Message("","",str[0] + " : " + str[1],CHATTING)));
                             break;
 
-                        case NEWCUSTOMER:
+                        case NEWCUSTOMER: // 고객 추가
                             str = m.getMsg().split("/");
                             connectDB();
                             pstmt = conn.prepareStatement(str[1]);
                             if(pstmt.executeUpdate() != 0) {
                                 msgSendAll(gson.toJson(new Message("", "", str[0] + "님이 등록되었습니다.", NEWCUSTOMER)));
+                                // 추가된 고객을 모든 클라이언트에게 알려 고객 알림창에 띄워주기
                             }
                             closeDB();
                             break;
-                        case UPDATECUSTOMER:
+                        case UPDATECUSTOMER: // 고객 수정
                             connectDB();
                             pstmt = conn.prepareStatement(m.getMsg());
                             System.out.println(m.getMsg());
@@ -155,7 +157,7 @@ public class MMSServer {
                             }
                             closeDB();
                             break;
-                        case DELETECUSTOMER:
+                        case DELETECUSTOMER: // 고객 삭제
                             connectDB();
                             pstmt = conn.prepareStatement(m.getMsg());
                             if(pstmt.executeUpdate() != 0) {
@@ -317,11 +319,11 @@ public class MMSServer {
                 }
 
             }
-            this.interrupt();
+            this.interrupt(); // 동작이 끝나면 종료시켜주기
             logger.info(this.getName() + " 종료됨!!");
         }
 
-        public void msgSendAll(String msg) {
+        public void msgSendAll(String msg) { // 메시지를 브로드캐스트 하기
             for (MMSThread ct : mmsThreadList) {
                 ct.outMsg.println(msg);
             }
