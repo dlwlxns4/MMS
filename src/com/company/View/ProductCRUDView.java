@@ -14,7 +14,7 @@ public class ProductCRUDView extends JFrame {
     public boolean editMode;
 
 
-    public ProductCRUDView(){
+    public ProductCRUDView(){ // 제품 등록 창 생성
         codeLabel = new JLabel("Code");
         nameLabel = new JLabel("Name");
         priceLabel = new JLabel("Price");
@@ -34,7 +34,7 @@ public class ProductCRUDView extends JFrame {
         centerPanel = new JPanel();
         bottomPanel = new JPanel();
     }
-    public void drawView(){
+    public void drawView(){ // 제품 등록 창 그려주기
 
         setTitle("상품 등록");
         setSize(400,470);

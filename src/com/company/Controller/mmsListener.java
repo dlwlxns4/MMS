@@ -283,26 +283,26 @@ public class mmsListener {
         });
 
     }
-    public void customerViewPanelListener(CustomerViewPanel panel){
+    public void customerViewPanelListener(CustomerViewPanel panel){ // customerVuewPanel의 각 버튼의 특정 역할의 리스너 부착
 
-        panel.addButton.addActionListener(e -> {
+        panel.addButton.addActionListener(e -> { //CustomerPanel의 등록 버튼을 누르면 고객 등록 창을 띄워준다.
             CustomerManageView cmv = ProgramManager.getInstance().getCC().makeCustomerManageView();
             customerManageViewListener(cmv);
         });
-        panel.searchButton.addActionListener(e -> {
+        panel.searchButton.addActionListener(e -> { // 조회 버튼을 누르면 조회해주는 메서드 실행
             ProgramManager.getInstance().getCC().search = true;
             ProgramManager.getInstance().getCC().appMain();
         });
-        panel.updateButton.addActionListener(e -> {
+        panel.updateButton.addActionListener(e -> { // 수정 버튼을 누르면 수정해주는 메서드 실행
             ProgramManager.getInstance().getCC().update = true;
             ProgramManager.getInstance().getCC().appMain();
         });
-        panel.deleteButton.addActionListener(e -> {
+        panel.deleteButton.addActionListener(e -> { // 삭제 버튼을 누르면 삭제해주는 메서드 실행
             ProgramManager.getInstance().getCC().delete =true;
             ProgramManager.getInstance().getCC().appMain();
         });
 
-        panel.tblCustomerList.addMouseListener(new MouseListener() {
+        panel.tblCustomerList.addMouseListener(new MouseListener() { // customerViewPanel에 부착된 Table이 클릭됐다면 해당 행의 폰 번호를 저장해주는 메서드 실행
             @Override
             public void mouseClicked(MouseEvent e) {
                 ProgramManager.getInstance().getCC().isClick =true;
@@ -425,23 +425,23 @@ public class mmsListener {
 
     }
 
-    public void customerManageViewListener(CustomerManageView frame){
+    public void customerManageViewListener(CustomerManageView frame){ // 고객 등록 창의 각 버튼에 특정 역할을 부여하는 리스너 등록
 
-        frame.btnRegister.addActionListener(e -> {
+        frame.btnRegister.addActionListener(e -> { // 등록 버튼을 누르면 입력된 정보로 고객 신규 등록하는 메서드 실행
             ViewManager.getInstance().setCustomerManageView(frame);
             ProgramManager.getInstance().getCC().register =true;
             ProgramManager.getInstance().getCC().appMain();
         });
-        frame.btnExit.addActionListener(e -> {
+        frame.btnExit.addActionListener(e -> { // 창 닫기 메서드 실행
             frame.dispose();
         });
     }
 
-    public void chattingViewListener(ChattingView frame) {
-        frame.exitButton.addActionListener(e-> {
+    public void chattingViewListener(ChattingView frame) { // 채팅 창의 각 버튼에 특정 역할을 부여해주는 리스너 등록
+        frame.exitButton.addActionListener(e-> { // 채팅 창 닫기 메서드 실행
             ProgramManager.getInstance().getChattingController().exitChatting();
         });
-        frame.msgInput.addActionListener((e -> {
+        frame.msgInput.addActionListener((e -> { // 메시지 보내기 메서드 실행
             ProgramManager.getInstance().getChattingController().sendTextMessage(ProgramManager.getInstance().id + "/" + frame.msgInput.getText());
             ViewManager.getInstance().getChattingView().msgInput.setText("");
         }));
