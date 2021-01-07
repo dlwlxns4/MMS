@@ -4,7 +4,7 @@ public class Message {
 
     private String id;
     private String passwd;
-    private String msg;
+    private String msg; // 메시지 내용
     private int type; // 메세지 유형(로그인, 로그아웃, 메세지 전달 등)
 
     public Message() {

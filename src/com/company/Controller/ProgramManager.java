@@ -3,17 +3,17 @@ package com.company.Controller;
 import com.company.View.*;
 
 import java.sql.*;
-
+/*
+ * ProgramManager는 시스템에서 이용되는 Controller와 State를 관리하는
+ * 싱글톤 패턴이 적용된 클래스이다.
+ */
 public class ProgramManager {
-
-    String jdbcDriver = "com.mysql.cj.jdbc.Driver";
-    String jdbcUrl = "jdbc:mysql://localhost:3306/mms?&serverTimezone=Asia/Seoul&useSSL=false";
-    Connection conn;
     private MainState mainState;
     private LoginState loginState;
     private OrderManageState orderManageState;
     private CustomerManageState customerManageState;
     private CustomerController CC;
+    private LoginController loginController;
     public String id,pw;
     private ChattingController chattingController;
     private State state;
@@ -27,6 +27,11 @@ public class ProgramManager {
     public ChattingController getChattingController() {
         if(chattingController == null) chattingController = new ChattingController();
         return chattingController;
+    }
+
+    public LoginController getLoginController() {
+        if(loginController == null) loginController = new LoginController();
+        return loginController;
     }
 
 

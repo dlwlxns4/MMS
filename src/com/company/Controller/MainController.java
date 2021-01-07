@@ -22,22 +22,24 @@ import java.util.logging.Logger;
 
 public class MainController extends Thread {
 
-    private Logger logger; // 모르면 사용한해도 될듯..
-
+    private Logger logger;
     // Message 객체를 json 객체로 파싱하기 위한 Gson 객체 생성
     private Gson gson = new Gson();
-
     private Socket s;
-
     // 입출력 스트림
     private BufferedReader inMsg = null; // 서버가 보낸 메시지를 읽는 버퍼
     private PrintWriter outMsg = null; // 서버에 메시지를 보낼 버퍼
-
     private boolean status;
-
     private Message m;
-
     private Thread thread;
+
+    static final int INSERT_ACCOUNT = 1, LOGIN = 2, LOGOUT = 3, CHATTING = 4, NEWCUSTOMER = 8, UPDATECUSTOMER = 9, DELETECUSTOMER = 10, ERROR = 15;
+    // 1: 계정 추가, 2: 로그인, 3: 로그아웃, 4: 채팅 메시지, 8: 고객 추가, 9: 고객 수정, 10 : 고객 삭제, 15: 에러 메시지
+    static final int ADD_PRODUCT =5; // 상품 등록
+    static final int UPDATE_PRODUCT =6; // 상품 수정
+    static final int DELETE_PRODUCT = 7; // 상품 삭제
+    static final int ORDERCOMPLETE = 18; // 주문 성공 시
+    static final int ORDERFAIL = 19; // 재고 부족으로 주문 실패 시..'
 
     public MainController() {
         // 로거 객체 초기화
@@ -76,41 +78,37 @@ public class MainController extends Thread {
 
                 m = gson.fromJson(msg, Message.class);
                 switch (m.getType()) {
-                    case 2 :
-                        LoginViewPanel lvp = ViewManager.getInstance().getMainView().loginViewPanel;
-                        String id = lvp.txtId.getText();
-                        String pw = lvp.txtPw.getText();
-                        if(m.getId().equals(id) && m.getPasswd().equals(pw)) {
-                            ProgramManager.getInstance().id = m.getId();
-                            ProgramManager.getInstance().pw = m.getPasswd();
-                            ProgramManager.getInstance().setMainState();
-                        }
+                    case LOGIN : // 로그인되면 ID와 PW를 저장하고 시스템 접속
+                        ProgramManager.getInstance().id = m.getId();
+                        ProgramManager.getInstance().pw = m.getPasswd();
+                        ProgramManager.getInstance().setMainState();
                         break;
-                    case 4 :
+                    case CHATTING: // 채팅창 업데이트
                         ViewManager.getInstance().getChattingView().refreshData(m.getMsg());
                         break;
-                    case 5 : // 상품 등록
-                        try {
+                    case ADD_PRODUCT : // 상품 등록
+                        try { // 테이블 갱신
                             ProgramManager.getInstance().getPC().refreshData();}
                         catch(Exception e1){}
                         break;
-                    case 6 : // 상품 수정
-                        try {
+                    case UPDATE_PRODUCT : // 상품 수정
+                        try { // 테이블 갱신
                             ProgramManager.getInstance().getPC().refreshData();}
                         catch(Exception e1){}
                         break;
-                    case 7 : // 상품 삭제
-                        try {
+                    case DELETE_PRODUCT : // 상품 삭제
+                        try { // 테이블 갱신
                             ProgramManager.getInstance().getPC().refreshData();}
                         catch(Exception e1){}
                         break;
-                    case 8 : // 고객 등록
+                    case NEWCUSTOMER : // 고객 등록
+                        // 신규 고객 알림 창에 표시하기
                         ViewManager.getInstance().getMainView().customerViewPanel.drawTextArea(m.getMsg());
                         break;
-                    case 9 : break; // 고객 수정
-                    case 10 : break; // 고객 삭제
+                    case UPDATECUSTOMER : break; // 고객 수정
+                    case DELETECUSTOMER : break; // 고객 삭제
 
-                    case 18 : // 주문 성공
+                    case ORDERCOMPLETE : // 주문 성공
                     {
                         System.out.println("클라이언트 체크 : " + "/" + m.getId());
                         if(m.getId().equals(ProgramManager.getInstance().id)) { // 만약 해당 클라이언트가 서버에서 보낸 메세지의 id에 해당하는 경우
@@ -133,7 +131,7 @@ public class MainController extends Thread {
                         }
                         break;
                     }
-                    case 19 : // 주문 실패
+                    case ORDERFAIL : // 주문 실패
                     {
                         if(m.getId().equals(ProgramManager.getInstance().id)) { // 만약 해당 클라이언트가 서버에서 보낸 메세지의 id에 해당하는 경우
                             try {
@@ -148,7 +146,7 @@ public class MainController extends Thread {
                         break;
                     }
 
-                    case 15 : // 에러 메시지
+                    case ERROR : // 에러 메시지
                         LoginViewPanel loginPanel = ViewManager.getInstance().getMainView().loginViewPanel;
                         loginPanel.txtId.setText("");
                         loginPanel.txtPw.setText("");

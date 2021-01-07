@@ -1,8 +1,8 @@
 package com.company.Model;
 
 public class AccountDTO {
-    private String id,password,userName;
-    private boolean isSupperUser,isStaff,isLogin;
+    private String id,password,userName; // 계정 id, password, 유저 이름
+    private boolean isSupperUser,isStaff,isLogin; // 관리자 계정인지, 직원인지, 로그인 상태
 
     public boolean getIsLogin() { return isLogin; }
 

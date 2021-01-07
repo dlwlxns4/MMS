@@ -7,7 +7,7 @@ import com.company.View.ViewManager;
 
 import javax.swing.*;
 
-public class OrderManageState implements State{
+public class OrderManageState implements State{ // 주문관리화면일 때 상태
     OrderListViewPanel listViewPanel;
     MainView mainView;
 
@@ -16,12 +16,7 @@ public class OrderManageState implements State{
     }
 
     @Override
-    public void drawFrame() {
-
-    }
-
-    @Override
-    public void drawPanel() {
+    public void drawPanel() { // 고객관리화면, 재고관리화면을 안보이게 하고, 주문관리화면만 보이게 하기
         mainView = ViewManager.getInstance().getMainView();
         mainView.customerViewPanel.setVisible(false);
         mainView.productViewPanel.setVisible(false);
@@ -29,7 +24,7 @@ public class OrderManageState implements State{
     }
 
     @Override
-    public void applyListener() {
+    public void applyListener() { // 주문관리화면에 있는 버튼에 리스너 달아주기
         listViewPanel = ViewManager.getInstance().getMainView().orderListViewPanel;
         mmsListener.getInstance().orderListViewPanelListener(listViewPanel);
     }

@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 public class MMSServer {
     Connection conn;
     PreparedStatement pstmt;
-    Statement stmt;
     ResultSet rs;
     String userid = "jaewon";
     String pwd = "wlfkf132";
@@ -40,7 +39,6 @@ public class MMSServer {
     static final int PAYTRY = 17; // 구매 시도
     static final int ORDERCOMPLETE = 18; // 주문 성공 시
     static final int ORDERFAIL = 19; // 재고 부족으로 주문 실패 시..'
-    static final int UPDATECUSTOMERPOINT = 20; // 구매완료 시 총 구매금액의 10% 갱신
     // -------------------------------------------------------------------------------
     // -------------------------------------------------------------------------------
 
@@ -133,7 +131,7 @@ public class MMSServer {
                     m = gson.fromJson(msg, Message.class); // Message 클래스로 매핑
                     String str[] = {};
                     switch(m.getType()) {
-                        case CHATTING:
+                        case CHATTING: // 메시지 내용 브로드 캐스트
                             str = m.getMsg().split("/");
                             msgSendAll(gson.toJson(new Message("","",str[0] + " : " + str[1],CHATTING)));
                             break;
@@ -165,7 +163,7 @@ public class MMSServer {
                             }
                             closeDB();
                             break;
-                        case INSERT_ACCOUNT:
+                        case INSERT_ACCOUNT: // 계정 생성
                             connectDB();
                             pstmt = conn.prepareStatement(m.getMsg());
                             if(pstmt.executeUpdate() != 0) {
@@ -173,13 +171,13 @@ public class MMSServer {
                             }
                             closeDB();
                             break;
-                        case LOGIN:
+                        case LOGIN: // 로그인
                             connectDB();
 
                             pstmt = conn.prepareStatement(m.getMsg());
                             rs = pstmt.executeQuery();
 
-                            if(rs.next()) {
+                            if(rs.next()) { // 일치하는 계정이 있으면 로그인 상태를 true로 만들고, 다른 클라이언트의 채팅창에 메시지 보내기
                                 AccountDAO adao = new AccountDAO();
                                 adao.setLogin(m.getId(),m.getPasswd());
                                 msgSendAll(gson.toJson(new Message(m.getId(), m.getPasswd(), m.getId() + "님이 로그인 하셨습니다.", LOGIN)));
@@ -188,7 +186,7 @@ public class MMSServer {
                             }
                             closeDB();
                             break;
-                        case LOGOUT:
+                        case LOGOUT: // 로그인상태를 false로 만들고, 다른 클라이언트의 채팅창에 메시지 보내기
                             connectDB();
                             AccountDAO adao = new AccountDAO();
                             adao.setLogout(m.getId(), m.getPasswd());

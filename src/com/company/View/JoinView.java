@@ -9,9 +9,7 @@ public class JoinView extends JFrame{
     public JButton joinButton;
     public ButtonGroup buttonGroup;
 
-    public static void main(String[] args) { new JoinView().drawView(); }
-
-    public JoinView() {
+    public JoinView() { // 회원가입 창 생성
 
         idLabel = new JLabel("ID");
         pwLabel = new JLabel("PW");
@@ -30,7 +28,7 @@ public class JoinView extends JFrame{
         joinButton = new JButton("등록");
     }
 
-    public void drawView() {
+    public void drawView() { // 회원가입 창 그리기
         setTitle("회원가입");
         setLayout(null);
 

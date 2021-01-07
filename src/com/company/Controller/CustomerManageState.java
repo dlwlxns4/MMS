@@ -4,16 +4,11 @@ import com.company.View.*;
 
 import javax.swing.*;
 
-public class CustomerManageState implements State {
+public class CustomerManageState implements State { // 고객관리화면일때의 상태
     MainView mainView;
     CustomerViewPanel customerViewPanel;
     @Override
     public void draw() {
-
-    }
-
-    @Override
-    public void drawFrame() {
 
     }
 
