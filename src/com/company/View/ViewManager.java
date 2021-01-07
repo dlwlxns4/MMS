@@ -1,7 +1,11 @@
 package com.company.View;
 
-import com.company.Controller.ProgramManager;
 import com.company.Controller.mmsListener;
+
+/*
+ * ViewManager는 시스템의 모든 frame과 panel을 관리하는
+ * 싱글톤 패턴이 적용된 클래스이다.
+ */
 
 public class ViewManager {
 

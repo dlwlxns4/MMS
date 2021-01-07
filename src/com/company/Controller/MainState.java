@@ -8,7 +8,7 @@ import javax.swing.*;
 
 import java.sql.SQLException;
 
-public class MainState implements State{
+public class MainState implements State{ // 재고관리화면일때의 상태
 
     ProgramManager manager;
     MainView mainView;
@@ -23,12 +23,7 @@ public class MainState implements State{
         mainView.drawProductViewPanel();
         mainView.drawMainPanel();
         applyListener();
-        //패널 생성후 리스너 적용하기
-    }
-
-    @Override
-    public void drawFrame() {
-
+        // 메인 뷰 프레임에 붙여질 모든 패널 생성후 리스너 붙여주는 메소드 호출
     }
 
     @Override
@@ -45,11 +40,10 @@ public class MainState implements State{
     @Override
     public void applyListener() {
         mainView = ViewManager.getInstance().getMainView();
-        mainView = ViewManager.getInstance().getMainView();
         mmsListener.getInstance().mainViewPanelListener(mainView.mainViewPanel); // mainViewPanel에 리스너 달기
         mmsListener.getInstance().productViewPanelListener(mainView.productViewPanel); // ProductViewPanel에 리스너 달기
         mmsListener.getInstance().productCRUDViewListener(ViewManager.getInstance().getProductCRUDView()); // CRUDPanel에 리스너달기
-        mmsListener.getInstance().chattingViewListener(ViewManager.getInstance().getChattingView()); // cHATTINGvIEW에 리스너달기
+        mmsListener.getInstance().chattingViewListener(ViewManager.getInstance().getChattingView()); // Chatting View에 리스너달기
     }
 
     @Override

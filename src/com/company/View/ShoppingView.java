@@ -34,7 +34,7 @@ public class ShoppingView extends JFrame {
     public String tableHeader[] = { "Code","Name","Price","Count","State"};
 
 
-    public ShoppingView() {
+    public ShoppingView() { // 장바구니 창 셍성
 
         // 폰트 설정
         fnt = new Font("Dialog", Font.BOLD, 15);
@@ -98,7 +98,7 @@ public class ShoppingView extends JFrame {
 
     }
 
-    public void drawView() {
+    public void drawView() { // 장바구니 화면 그려주기
 
         setTitle("Shopping View");
         setSize(400, 550);

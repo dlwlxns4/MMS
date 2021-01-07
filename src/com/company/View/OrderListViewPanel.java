@@ -7,8 +7,6 @@ import java.awt.event.ActionListener;
 
 public class OrderListViewPanel extends JPanel {
     JPanel ListPanel;
-    JLabel orderLab; //판매 정보 및 매출
-    JTextArea orderHistoryView; //상품 판매기록 뵤여주는 JTestArea
     JPanel revenuePanel;
     JLabel revenueMonth; //월별 매출
     JLabel revenueDay; //요일별 매출
@@ -38,20 +36,17 @@ public class OrderListViewPanel extends JPanel {
         ListPanel = new JPanel();
 
         //OrderLab
-        //orderLab = new JLabel("판매 정보 및 매출");
         String menu[] = {"주문 내역", "주문 상세 내역"};
         cb = new JComboBox(menu); // 상품을 콤보박스에서 조회할 수 있도록 생성
         btnSerach = new JButton("조회");
 
         //orderHistory View
-        //orderHistoryView = new JTextArea();
         orderModel = new DefaultTableModel(orderHeader,0);
         orderHistoryModel = new DefaultTableModel(orderHistoryHeader,0);
         orderTable = new JTable(orderModel);
         orderHistoryTable = new JTable(orderHistoryModel);
         orderScroll = new JScrollPane(orderTable);
         orderHistoryScroll = new JScrollPane(orderHistoryTable);
-        //orderHistoryScroll = new JScrollPane(orderTable);
 
         //revenue panel + Label
         revenuePanel = new JPanel();

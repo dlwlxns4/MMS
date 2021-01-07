@@ -9,7 +9,7 @@ public class MainViewPanel extends JPanel {
     public JLabel messageLabel, timeLabel, blinkLabel;
     public String date, time;
 
-    public MainViewPanel() {
+    public MainViewPanel() { // 메인패널 생성
         buttonPanel = new JPanel();
         productButton = new JButton("Product");
         orderListButton = new JButton("OrderList");
@@ -24,7 +24,7 @@ public class MainViewPanel extends JPanel {
         timeLabel = new JLabel("현재 시간: ");
     }
 
-    public void drawView(){
+    public void drawView(){ // 메인패널 그리기
         setSize(1200, 800);
         setLayout(new BorderLayout());
         buttonPanel.setLayout(new GridLayout(1, 5));

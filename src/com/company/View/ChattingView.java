@@ -1,5 +1,7 @@
 package com.company.View;
 
+import com.company.Controller.ProgramManager;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 
@@ -33,6 +35,7 @@ public class ChattingView extends JFrame{
 
     public void drawView() { // 채팅 창 그려주기
 
+        chatNameLabel.setText("로그인 : " + ProgramManager.getInstance().id);
         chatNamePanel.add(chatNameLabel, BorderLayout.WEST);
         add(chatNamePanel, BorderLayout.PAGE_START);
 

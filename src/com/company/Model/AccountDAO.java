@@ -22,7 +22,7 @@ public class AccountDAO {
         accountList = getAll();
     }
 
-    public void connectDB() {
+    public void connectDB() { // DB에 접속
         try {
             Class.forName(jdbcDriver);
 
@@ -32,7 +32,7 @@ public class AccountDAO {
             e.printStackTrace();
         }
     }
-    public void closeDB() {
+    public void closeDB() { // DB 접속 종료
         try {
             pstmt.close();
             if(rs != null) rs.close();
@@ -41,7 +41,7 @@ public class AccountDAO {
             e.printStackTrace();
         }
     }
-    public ArrayList<AccountDTO> getAll(){
+    public ArrayList<AccountDTO> getAll(){ // DB에 등록되어있는 모든 계정 받아오기
         sql = "select * from Accounts";
         connectDB();
         ArrayList<AccountDTO> accountList = new ArrayList<>();
@@ -67,7 +67,7 @@ public class AccountDAO {
         closeDB();
         return accountList;
     }
-    public boolean setLogin(String id, String PW){
+    public boolean setLogin(String id, String PW){ // id와 pw에 일치하는 계정의 로그인 상태를 true로 만들기
         int check=0;
         sql = "update Accounts set is_login = ? where id = ? and passwd = ?";
         connectDB();
@@ -86,7 +86,7 @@ public class AccountDAO {
         if(check != 0) return true;
         return false;
     }
-    public boolean setLogout(String id, String PW){
+    public boolean setLogout(String id, String PW){ // id와 pw에 일치하는 계정의 로그인 상태를 false로 만들기
         int check=0;
         sql = "update Accounts set is_login = ? where id = ? and passwd = ?";
         connectDB();
@@ -102,44 +102,6 @@ public class AccountDAO {
             throwables.printStackTrace();
         }
         closeDB();
-        if(check != 0) return true;
-        return false;
-    }
-    public boolean loginProgram(String id, String PW){
-
-        for(AccountDTO account : accountList) {
-            System.out.println("Check");
-            if( account.getId().equals(id) ) {
-                if (account.getPassword().equals(PW)) {
-                    System.out.println("로그인에 성공하였습니다!");
-                    return true;
-                } else {
-                    System.out.println("비밀번호가 틀렸습니다.");
-                    return false;
-                }
-            }
-        }
-        System.out.println("입력하신 아이디는 없는 아이디입니다.");
-        return false;
-    }
-
-
-    public boolean makeAccount(AccountDTO account){
-        int check = 0;
-        sql = "insert into Accounts(id, passwd, is_superuser, is_staff, user_name, is_login) values(?, ?, ?, ?, ?, ?)";
-        connectDB();
-        try{
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1,account.getId());
-            pstmt.setString(2,account.getPassword());
-            pstmt.setBoolean(3,account.getIsSupperUser());
-            pstmt.setBoolean(4,account.getIsStaff());
-            pstmt.setString(5,account.getUserName());
-            pstmt.setBoolean(6,account.getIsLogin());
-            check = pstmt.executeUpdate();
-        } catch(Exception e){
-            e.printStackTrace();
-        }
         if(check != 0) return true;
         return false;
     }
