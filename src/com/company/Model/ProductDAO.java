@@ -80,7 +80,7 @@ public class ProductDAO {
         }
         closeDB();
         return datas;
-    }
+    } // getAll 상품 전체 가져오기
 
     public ProductDTO getProduct(int prcode) throws SQLException, ClassNotFoundException {
         sql = "select * from Product where pr_code = ?";
@@ -118,30 +118,9 @@ public class ProductDAO {
         }
         closeDB();
         return p;
-    }
+    } // getProduct 상품 하나 가져오기
 
-    public boolean delProduct(int prcode) throws SQLException, ClassNotFoundException {
-        String sql = "delete from Product where pr_code = ?";
-        connectDB();
 
-        try {
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, prcode);
-
-            if(pstmt.executeUpdate() == 0) {
-                closeDB();
-                return false;
-            } else {
-                closeDB();
-                return true;
-            }
-        } catch (SQLException e) {
-            closeDB();
-            e.printStackTrace();
-            return false;
-        }
-
-    }
 
     public void updateProduct(ProductDTO product) throws SQLException, ClassNotFoundException {
         ProductDTO p = product;
@@ -168,65 +147,8 @@ public class ProductDAO {
             closeDB();
             e.printStackTrace();
         }
-    }
+    } //updateProduct 상품 업데이트하기
 
-    public void updateProduct2(ProductDTO product, int a)  {
-        ProductDTO p = product;
-        String sql = "update Product set pr_name = ?, PRICE = ?, location = ?, exp_date = ?, amount = ?, state = ? where pr_code = ?";
-        try {
-            connectDB();
-        }catch (Exception e){}
-
-        try {
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(7, a);
-            pstmt.setString(1, p.getPrName());
-            pstmt.setInt(2, p.getPrice());
-            pstmt.setString(3, p.getLocation());
-            pstmt.setDate(4, (Date) p.getExpDate());
-            pstmt.setInt(5, p.getAmount());
-            pstmt.setString(6, p.getState());
-
-
-            if(pstmt.executeUpdate() == 0) {
-                closeDB();
-            } else {
-                closeDB();
-            }
-        } catch (SQLException e) {
-            closeDB();
-            e.printStackTrace();
-        }
-    }
-
-    public boolean newProduct(ProductDTO product) throws SQLException, ClassNotFoundException {
-        ProductDTO p = product;
-        String sql = "insert into Product(pr_code, pr_name, price, location, exp_date, amount, state) values(?, ?, ?, ?, ?, ?, ?)";
-        connectDB();
-
-        try {
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, p.getPrCode());
-            pstmt.setString(2, p.getPrName());
-            pstmt.setInt(3, p.getPrice());
-            pstmt.setString(4, p.getLocation());
-            pstmt.setDate(5, (Date) p.getExpDate());
-            pstmt.setInt(6, p.getAmount());
-            pstmt.setString(7, p.getState());
-
-            if(pstmt.executeUpdate() == 0)  {
-                closeDB();
-                return false;
-            } else  {
-                closeDB();
-                return true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            closeDB();
-            return false;
-        }
-    }//new
 
     public void closeDB() {
         try {

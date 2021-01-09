@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 public class MMSServer {
     Connection conn;
     PreparedStatement pstmt;
-    Statement stmt;
     ResultSet rs;
     String userid = "jaewon";
     String pwd = "wlfkf132";
@@ -31,15 +30,15 @@ public class MMSServer {
     // -------------------------------------------------------------------------------
     // -------------------------------------------------------------------------------
     static final int INSERT_ACCOUNT = 1, LOGIN = 2, LOGOUT = 3, CHATTING = 4, NEWCUSTOMER = 8, UPDATECUSTOMER = 9, DELETECUSTOMER = 10, ERROR = 15;
-    static final int ADD_PRODUCT =5;
-    static final int UPDATE_PRODUCT =6;
-    static final int DELETE_PRODUCT = 7;
+    // 1: 계정 추가, 2: 로그인, 3: 로그아웃, 4: 채팅 메시지, 8: 고객 추가, 9: 고객 수정, 10 : 고객 삭제, 15: 에러 메시지
+    static final int ADD_PRODUCT =5; // 상품 등록
+    static final int UPDATE_PRODUCT =6; // 상품 수정
+    static final int DELETE_PRODUCT = 7; // 상품 삭제
     static final int ORDER = 11; // 주문 테이블 갱신
     static final int ORDERHISTORY = 16; // 주문 내역 테이블 갱신
     static final int PAYTRY = 17; // 구매 시도
     static final int ORDERCOMPLETE = 18; // 주문 성공 시
     static final int ORDERFAIL = 19; // 재고 부족으로 주문 실패 시..'
-    static final int UPDATECUSTOMERPOINT = 20; // 구매완료 시 총 구매금액의 10% 갱신
     // -------------------------------------------------------------------------------
     // -------------------------------------------------------------------------------
 
@@ -54,7 +53,7 @@ public class MMSServer {
 
     Logger logger; // 로거 객체 선언
 
-    public void connectDB() {
+    public void connectDB() { // DB연결
         try {
             Class.forName(jdbcDriver);
             System.out.println("드라이버 로드 성공");
@@ -71,7 +70,7 @@ public class MMSServer {
         }
     }
 
-    public void closeDB() {
+    public void closeDB() { // DB 연결 종료
         try {
             pstmt.close();
             if(rs!=null) rs.close();
@@ -81,20 +80,20 @@ public class MMSServer {
         }
     }
 
-    private void start() {
+    private void start() { // 서버 시작
         logger = Logger.getLogger(this.getClass().getName());
 
         try {
-            Collections.synchronizedList(mmsThreadList); // List synchronized 준혁 추가 ...
+            Collections.synchronizedList(mmsThreadList); // 리스트 동기화 하여 관리
             ss = new ServerSocket(7777); // 임의의 포트번호를 통해 서버 소켓 생성
             logger.info("MultiChatServer start");
 
             while (true) {
-                s = ss.accept();
+                s = ss.accept(); // 클라이언트가 접속할 때까지 기다림
 
                 MMSThread chat = new MMSThread();
                 mmsThreadList.add(chat);
-                chat.start();
+                chat.start(); // 클라이언트와 연결 된 쓰레드 동작
             }
 
         } catch (Exception e) {
@@ -103,7 +102,7 @@ public class MMSServer {
         }
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[]) { // 서버 실행
         MMSServer multiChatServer = new MMSServer();
         multiChatServer.start();
     }
@@ -132,21 +131,22 @@ public class MMSServer {
                     m = gson.fromJson(msg, Message.class); // Message 클래스로 매핑
                     String str[] = {};
                     switch(m.getType()) {
-                        case CHATTING:
+                        case CHATTING: // 메시지 내용 브로드 캐스트
                             str = m.getMsg().split("/");
                             msgSendAll(gson.toJson(new Message("","",str[0] + " : " + str[1],CHATTING)));
                             break;
 
-                        case NEWCUSTOMER:
+                        case NEWCUSTOMER: // 고객 추가
                             str = m.getMsg().split("/");
                             connectDB();
                             pstmt = conn.prepareStatement(str[1]);
                             if(pstmt.executeUpdate() != 0) {
                                 msgSendAll(gson.toJson(new Message("", "", str[0] + "님이 등록되었습니다.", NEWCUSTOMER)));
+                                // 추가된 고객을 모든 클라이언트에게 알려 고객 알림창에 띄워주기
                             }
                             closeDB();
                             break;
-                        case UPDATECUSTOMER:
+                        case UPDATECUSTOMER: // 고객 수정
                             connectDB();
                             pstmt = conn.prepareStatement(m.getMsg());
                             System.out.println(m.getMsg());
@@ -155,7 +155,7 @@ public class MMSServer {
                             }
                             closeDB();
                             break;
-                        case DELETECUSTOMER:
+                        case DELETECUSTOMER: // 고객 삭제
                             connectDB();
                             pstmt = conn.prepareStatement(m.getMsg());
                             if(pstmt.executeUpdate() != 0) {
@@ -163,7 +163,7 @@ public class MMSServer {
                             }
                             closeDB();
                             break;
-                        case INSERT_ACCOUNT:
+                        case INSERT_ACCOUNT: // 계정 생성
                             connectDB();
                             pstmt = conn.prepareStatement(m.getMsg());
                             if(pstmt.executeUpdate() != 0) {
@@ -171,13 +171,13 @@ public class MMSServer {
                             }
                             closeDB();
                             break;
-                        case LOGIN:
+                        case LOGIN: // 로그인
                             connectDB();
 
                             pstmt = conn.prepareStatement(m.getMsg());
                             rs = pstmt.executeQuery();
 
-                            if(rs.next()) {
+                            if(rs.next()) { // 일치하는 계정이 있으면 로그인 상태를 true로 만들고, 다른 클라이언트의 채팅창에 메시지 보내기
                                 AccountDAO adao = new AccountDAO();
                                 adao.setLogin(m.getId(),m.getPasswd());
                                 msgSendAll(gson.toJson(new Message(m.getId(), m.getPasswd(), m.getId() + "님이 로그인 하셨습니다.", LOGIN)));
@@ -186,7 +186,7 @@ public class MMSServer {
                             }
                             closeDB();
                             break;
-                        case LOGOUT:
+                        case LOGOUT: // 로그인상태를 false로 만들고, 다른 클라이언트의 채팅창에 메시지 보내기
                             connectDB();
                             AccountDAO adao = new AccountDAO();
                             adao.setLogout(m.getId(), m.getPasswd());
@@ -195,7 +195,7 @@ public class MMSServer {
                             logger.info("id :" + id + " logout");
                             closeDB();
                             break;
-                        case ADD_PRODUCT:
+                        case ADD_PRODUCT: // 상품 등록
                             connectDB();
                             pstmt = conn.prepareStatement(m.getMsg());
                             if (pstmt.executeUpdate() != 0) {
@@ -205,7 +205,7 @@ public class MMSServer {
 
                             break; //Add
 
-                        case UPDATE_PRODUCT:
+                        case UPDATE_PRODUCT: // 상품 수정
                             connectDB();
                             pstmt = conn.prepareStatement(m.getMsg());
                             if (pstmt.executeUpdate() != 0) {
@@ -213,7 +213,7 @@ public class MMSServer {
                                 closeDB();
                             }
                             break;
-                        case DELETE_PRODUCT:
+                        case DELETE_PRODUCT: // 상품 삭제
                             connectDB();
                             System.out.println("삭제에 성공했나?");
                             pstmt =conn.prepareStatement(m.getMsg());
@@ -225,7 +225,7 @@ public class MMSServer {
 
                             break;
 
-                        case ORDER :
+                        case ORDER : // 클라이언틀에서 주문 요청 시 주문 내역을 업데이트 + 해당 주문의 ordercode 저장
                             connectDB();
                             try {
                                 pstmt = conn.prepareStatement(m.getMsg());
@@ -245,13 +245,13 @@ public class MMSServer {
                             closeDB();
                             break;
 
-                        case PAYTRY :
+                        case PAYTRY : // 클라이언트가 결제하기 버튼을 눌렀을 경우 물품 재고가 구매를 원하는 개수보다 많은지 여부에 따른 반환 값 메세지로 전송
                             connectDB();
                             str = m.getMsg().split("@");
                             int cnt = Integer.parseInt(str[1]); // 구매 예정인 즉, 업데이트 할 품목 개수
                             System.out.println("품목개수 : " + cnt);
                             boolean canBuy = true;
-                            String str1[] = str[0].split("/");
+                            String str1[] = str[0].split("/"); // 3쌍(업데이트 될 수량, 구매 수량, 상품 코드)이 세트이며 cnt 즉, 물품 개수만큼 반복해 재고 검사
                             for(int i=1; i<=cnt; i++) {
                                 try {
                                     sql = "select * from Product where pr_code = ?";
@@ -260,9 +260,9 @@ public class MMSServer {
                                     System.out.println("코드번호 : " + Integer.parseInt(str1[i*3-1]));
                                     rs = pstmt.executeQuery();
 
-                                    if(rs.next()) {
+                                    if(rs.next()) { // 순회하며 재고와 구매 수량 비교 후 canBuy의 boolean 값 결정
                                         if(rs.getInt("amount") < Integer.parseInt(str1[i*3-2])) {
-                                            System.out.println("품목별 재고 : " + rs.getInt("pr_code"));
+                                            System.out.println("품목별 재고 : " + rs.getInt("amount"));
                                             canBuy = false;
                                         }
                                     }
@@ -273,7 +273,7 @@ public class MMSServer {
 
                             System.out.println(canBuy);
 
-                            if(canBuy) {
+                            if(canBuy) { // 재고가 충분해 구매가 가능한 경우 상품개수 업데이트 하고 Order내역과 OrderHistory내역, Customer 테이블의 정보를 갱신할 수 있도록 클라이언트에 메세지 전달
                                 for(int i=1; i<=cnt; i++) {
                                     try {
                                         sql = "update Product set amount = ? where pr_code = ?";
@@ -286,15 +286,15 @@ public class MMSServer {
                                         e.printStackTrace();
                                     }
                                 }
-                                msgSendAll(gson.toJson(new Message(m.getId(), "", "", ORDERCOMPLETE))); // 고객 아이디로 보내기
+                                msgSendAll(gson.toJson(new Message(m.getId(), "", "", ORDERCOMPLETE))); // 구매 고객 아이디로 보내기 --> 주문 성공 메세지
                             }
-                            else msgSendAll(gson.toJson(new Message(m.getId(), "", "", ORDERFAIL))); // 고객 아이디로 보내기
+                            else msgSendAll(gson.toJson(new Message(m.getId(), "", "", ORDERFAIL))); // 구매 고객 아이디로 보내기 --> 제고 부족으로 인한 주문 실패 메세지
 
                             System.out.println("서버에서 아이디는 : " + m.getId());
                             closeDB();
                             break;
 
-                        case ORDERHISTORY :
+                        case ORDERHISTORY : // 클라이언트에서 주문 상세 내역 쿼리문 실행 요청 시 msg에 해당하는 쿼리문 실행
                             connectDB();
                             str = m.getMsg().split("/");
                             try {
@@ -313,11 +313,11 @@ public class MMSServer {
                     status = false;
                 }
             }
-            this.interrupt();
+            this.interrupt(); // 동작이 끝나면 종료시켜주기
             logger.info(this.getName() + " 종료됨!!");
         }
 
-        public void msgSendAll(String msg) {
+        public void msgSendAll(String msg) { // 메시지를 브로드캐스트 하기
             for (MMSThread ct : mmsThreadList) {
                 ct.outMsg.println(msg);
             }

@@ -19,6 +19,7 @@ public class OrderHistoryDAO {
 
     }
 
+    // DB 연결 함수
     public void connectDB() {
         try {
             Class.forName(jdbcDriver);
@@ -36,6 +37,7 @@ public class OrderHistoryDAO {
         }
     }
 
+    // DB 종료 함수
     public void closeDB() {
         try {
             pstmt.close();
@@ -46,6 +48,7 @@ public class OrderHistoryDAO {
         }
     }
 
+    // OrderHistory 테이블에 있는 모든 행 반환
     public ArrayList<OrderHistoryDTO> getAll() {
         connectDB();
         sql = "select * from OrderHistory";
@@ -77,6 +80,7 @@ public class OrderHistoryDAO {
 
     }
 
+    // OrderHistory 테이블에서 인자로 받은 historyId에 해당하는 행 검색 후 반환
     public OrderHistoryDTO getOrderHistory(int historyId) {
         connectDB();
         sql = "select * from OrderHistory where history_id = ?";
@@ -104,6 +108,7 @@ public class OrderHistoryDAO {
         return ordHis;
     }
 
+    // OrderHistory테이블에 새로운 내역 추가 --> 서버에서 처리하므로 사용안한 함수
     public boolean addOrderHistory(OrderHistoryDTO ordHis) {
         connectDB();
         sql = "insert into OrderHistory(order_code, pr_code, pr_name, pr_count, pr_price) value(?, ?, ?, ?, ?)";
@@ -115,49 +120,6 @@ public class OrderHistoryDAO {
             pstmt.setString(3, ordHis.getPr_name());
             pstmt.setInt(4, ordHis.getPr_count());
             pstmt.setInt(5, ordHis.getPr_price());
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        closeDB();
-
-        return true;
-    }
-
-    // ------- 아래 함수는 사용 여부 미정 -------
-    public boolean delOrderHistory(int historyId) {
-        connectDB();
-        sql = "delete from OrderHistory where history_id = ?";
-
-        try {
-            pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, historyId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        closeDB();
-
-        return true;
-    }
-
-    // ------- 아래 함수는 사용 여부 미정 -------
-    public boolean updateOrderHistory(OrderHistoryDTO ordHis) { // 파라미터의 객체 정보로 업데이트
-        connectDB();
-        sql = "update OrderHistory set order_code = ?, pr_code = ?, pr_name = ?, pr_count = ?, pr_price = ? where history_id = ?";
-
-        try {
-            pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, ordHis.getOrder_code());
-            pstmt.setInt(2, ordHis.getPr_code());
-            pstmt.setString(3, ordHis.getPr_name());
-            pstmt.setInt(4, ordHis.getPr_count());
-            pstmt.setInt(5, ordHis.getPr_price());
-            pstmt.setInt(6, ordHis.getHistory_id());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

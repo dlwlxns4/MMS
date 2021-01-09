@@ -18,6 +18,7 @@ public class OrderDAO {
 
     }
 
+    // DB 접속을 위한 함수
     public void connectDB() {
         try {
             Class.forName(jdbcDriver);
@@ -35,6 +36,7 @@ public class OrderDAO {
         }
     }
 
+    // DB 종료를 위한 함수
     public void closeDB() {
         try {
             pstmt.close();
@@ -45,6 +47,7 @@ public class OrderDAO {
         }
     }
 
+    // Order 테이블에서 모든 행 반환
     public ArrayList<OrderDTO> getAll() {
         connectDB();
         sql = "select * from Orders";
@@ -75,6 +78,7 @@ public class OrderDAO {
 
     }
 
+    // Order 테이블에서 인자로 받은 ordercode에 해당하는 행 반환
     public OrderDTO getOrder(int orderCode) {
         connectDB();
         sql = "select * from Orders where order_code = ?";
@@ -101,37 +105,7 @@ public class OrderDAO {
         return order;
     }
 
-    /*
-    public boolean addOrder(OrderDTO order) { // 날짜는 추후 수정...
-        connectDB();
-        sql = "insert into Orders(entry_price, c_name, phone_num, buy_date) value(?, ?, ?, ?)";
-
-        try {
-            pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, order.getEntry_price());
-            pstmt.setString(2, order.getC_name());
-            pstmt.setString(3, order.getPhone_num());
-            pstmt.setString(4, order.getBuy_date());
-            pstmt.executeUpdate();
-
-            // 가장 최신의 입력된 auto_increment 값 가져오기
-            // --> mysql에서는 해당 값을 컨넥션 별로 관리하므로 멀티 스레드 구현 시 race condition같은 문제를 걱정할 필요없음
-            // 즉, 락을 걸거나 트랜잭션을 구현할 필요가 X
-            sql = "select last_insert_id()";
-            pstmt = con.prepareStatement(sql);
-            rs = pstmt.executeQuery();
-            if(rs.next()) order.setOrder_code(rs.getInt(1));
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        closeDB();
-
-        return true;
-    }*/
-
+    // ------- 아래 함수는 사용 안함(서버에서 처리함) -----------------------
     public boolean addOrder(String msg) { // 날짜는 추후 수정...
         connectDB();
         //sql = "insert into Orders(entry_price, c_name, phone_num, buy_date) value(?, ?, ?, ?)";
@@ -154,6 +128,7 @@ public class OrderDAO {
         return true;
     }
 
+    // ------- 아래 함수는 사용 안함(서버에서 처리함) -----------------------
     public boolean updateOrder(OrderDTO order) { // 파라미터의 객체 정보로 업데이트
         connectDB();
         sql = "update Orders set entry_price = ? where order_code = ?";
@@ -173,6 +148,7 @@ public class OrderDAO {
         return true;
     }
 
+    // ------- 아래 함수는 사용 안함(서버에서 처리함) -----------------------
     public boolean updateOrder(String msg) { // 파라미터의 객체 정보로 업데이트
         connectDB();
         sql = "update Orders set entry_price = ? where order_code = ?";
@@ -192,7 +168,7 @@ public class OrderDAO {
         return true;
     }
 
-    // ------- 아래 함수는 사용 여부 미정 -------
+    // ------- 아래 함수는 사용 안함(서버에서 처리함) -----------------------
     public boolean delOrder(int orderCode) {
         connectDB();
         sql = "delete from Orders where order_code = ?";

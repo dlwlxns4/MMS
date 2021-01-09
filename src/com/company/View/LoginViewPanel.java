@@ -8,7 +8,7 @@ public class LoginViewPanel extends JPanel{
     public JButton loginButton, joinButton;
     public JLabel idLabel, pwLabel;
 
-    public LoginViewPanel() {
+    public LoginViewPanel() { // 로그인 화면 생성
         setPreferredSize(new Dimension(1200,800));
         setLayout(null);
 
@@ -21,7 +21,7 @@ public class LoginViewPanel extends JPanel{
 
     }
 
-    public void drawView() {
+    public void drawView() { // 로그인 화면 그리기
         idLabel.setBounds(400,305,30,30);
         add(idLabel);
         txtId.setBounds(440,305,150,30);

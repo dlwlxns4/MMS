@@ -23,95 +23,71 @@ import java.util.ArrayList;
 public class mmsListener {
     private Gson gson = new Gson();
     private Message msg;
-    private Socket socket;
-    private BufferedReader inMsg = null;
-    private PrintWriter outMsg = null;
-    static final int INSERT_ACCOUNT = 1, LOGIN = 2, LOGOUT = 3, CHAT_MESSAGE = 4;
 
     private static mmsListener s_Instance;
-    public static mmsListener getInstance(){
+    public static mmsListener getInstance(){ // 싱글톤 패턴 적용
         if (s_Instance == null) s_Instance = new mmsListener();
         return s_Instance;
     }
 
-    public void loginPanelListener(LoginViewPanel panel){
-        panel.loginButton.addActionListener(e -> {
-            String id = panel.txtId.getText();
-            String pw = panel.txtPw.getText();
-//            AccountDAO dao = new AccountDAO();
-
-            String msg = "select * from Accounts where id = "
-                    + "'" + id + "'" + "and passwd = " + "'" + pw + "'";
-
-            ProgramManager.getInstance().getMainController().msgSend(new Message(id, pw, msg, LOGIN));
+    public void loginPanelListener(LoginViewPanel panel){ // 로그인 화면의 버튼에 리스너 달기
+        panel.loginButton.addActionListener(e -> { // 로그인 메서드 실행
+            ProgramManager.getInstance().getLoginController().login(panel);
         });
-        panel.joinButton.addActionListener(e -> {
+        panel.joinButton.addActionListener(e -> { // 회원가입 버튼에 리스너 달기
             ViewManager.getInstance().joinViewOpen();
             joinViewListener(ViewManager.getInstance().getJoinView());
         });
     }
-    public void joinViewListener(JoinView frame){
-        frame.joinButton.addActionListener(e -> {
-            String id = frame.txtId.getText();
-            String pw = frame.txtPw.getText();
-            String name = frame.txtName.getText();
-            String msg= "insert into Accounts(id, passwd, user_name, is_login) values('"
-                    + id + "', '" + pw + "', '" + name + "', " + 0 + ")";
-            if(id != null && pw != null && name != null) {
-                ProgramManager.getInstance().getMainController().msgSend(new Message(id, pw, msg, INSERT_ACCOUNT));
-                frame.dispose();
 
-            }
-            else {
-
-                JOptionPane.showMessageDialog(frame, "잘못된 양식입니다.");
-
-            }
-
+    public void joinViewListener(JoinView frame){ // 회원가입 창의 등록 버튼에 리스너 달기
+        frame.joinButton.addActionListener(e -> { // 조인 메서드 실행
+            ProgramManager.getInstance().getLoginController().join(frame);
         });
 
     }
-    public void mainViewPanelListener(MainViewPanel panel){ // **********
+
+    public void mainViewPanelListener(MainViewPanel panel){ // 메인 패널에 존재하는 각 버튼이 수행하는 기능의 리스너달기
 
         MainView mainView = ViewManager.getInstance().getMainView();
-        panel.productButton.addActionListener(e -> {
+        panel.productButton.addActionListener(e -> { // Product 버튼에 리스너 달기
             if(ProgramManager.getInstance().getState() instanceof OrderManageState){
                 mainView.orderListViewPanel.setVisible(false);
                 ProgramManager.getInstance().setMainState();
-            }
+            } // 현재 주문관리상태였다면 주문관리화면 안 보이게 하고 재품관리 상태로 바꾸기
             else if(ProgramManager.getInstance().getState() instanceof CustomerManageState){
                 mainView.customerViewPanel.setVisible(false);
                 ProgramManager.getInstance().setMainState();
-            }
+            } // 현재 고객관리상태였다면 고객관리화면 안 보이게 하고 재품관리 상태로 바꾸기
         });
-        panel.orderListButton.addActionListener(e-> {
+        panel.orderListButton.addActionListener(e-> { // OrderList 버튼에 리스너 달기
             if(ProgramManager.getInstance().getState() instanceof MainState) {
                 mainView.productViewPanel.setVisible(false);
                 ProgramManager.getInstance().setOrderManageState();
-            }
+            } // 현재 제품관리상태였다면 제품관리화면 안 보이게 하고 주문관리상태로 바꾸기
             else if(ProgramManager.getInstance().getState() instanceof CustomerManageState){
                 mainView.customerViewPanel.setVisible(false);
                 ProgramManager.getInstance().setOrderManageState();
-            }
+            } // 현재 고객관리상태였다면 고객관리화면 안 보이게 하고 주문관리상태로 바꾸기
         });
-        panel.customerButton.addActionListener(e->{
+        panel.customerButton.addActionListener(e->{ // Customer 버튼에 리스너 달기
             if(ProgramManager.getInstance().getState() instanceof MainState) {
                 mainView.productViewPanel.setVisible(false);
                 ProgramManager.getInstance().setCustomerManageState();
-            }
+            } // 현재 제품관리상태였다면 제품관리화면 안 보이게 하고 고객관리상태로 바꾸기
             else if(ProgramManager.getInstance().getState() instanceof OrderManageState){
                 mainView.orderListViewPanel.setVisible(false);
                 ProgramManager.getInstance().setCustomerManageState();
-            }
+            } // 현재 주문관리상태였다면 주문관리화면 안 보이게 하고 고객관리상태로 바꾸기
         });
-        panel.shoppingButton.addActionListener(e -> {
+        panel.shoppingButton.addActionListener(e -> { // Shopping 버튼에 리스너 달기
             ShoppingView shoppingView = ViewManager.getInstance().getShoppingView();
             shoppingView.setVisible(true);
             if(!ViewManager.getInstance().isShoppingViewOpen())
                 shoppingViewListener(shoppingView);
-        });
-        panel.logoutButton.addActionListener(e -> {
-            msg = new Message(ProgramManager.getInstance().id, ProgramManager.getInstance().pw,  "로그아웃", LOGOUT);
+        }); // 쇼핑 버튼 누르면 장바구니 창 나오게 하기
+        panel.logoutButton.addActionListener(e -> { // Logout 버튼에 리스너 달기
+            msg = new Message(ProgramManager.getInstance().id, ProgramManager.getInstance().pw,  "로그아웃", 3);
             ProgramManager.getInstance().getMainController().msgSend(msg);
             if(ProgramManager.getInstance().getState() instanceof MainState) {
                 mainView.productViewPanel.setVisible(false);
@@ -122,41 +98,59 @@ public class mmsListener {
             }
             panel.setVisible(false);
             ProgramManager.getInstance().setLoginState();
-        });
-        panel.chatButton.addActionListener(e -> {
+        }); // 각 상태에 따라 해당 화면 안 보이게 하고 main패널을 보이지 않게 한 후 로그아웃상태로 바꾸기
+        panel.chatButton.addActionListener(e -> { // chat 버튼에 리스너 달기
             ViewManager.getInstance().getChattingView().setVisible(true);
-        });
+        }); // 채팅창 보이게 하기
     }
+
     public void productViewPanelListener(ProductViewPanel panel){
         ProductDAO dao = new ProductDAO();
-        ArrayList<ProductDTO> datas = new ArrayList<ProductDTO>();
 
         panel.addButton.addActionListener(e -> {
-            addProduct();
-        });
-        panel.searchButton.addActionListener(e -> {
-            searchProduct(dao, panel.editMode, panel);
-            panel.editMode = true;
-        });
-        panel.deleteButton.addActionListener(e -> {
-            deleteProduct(dao,panel.editMode,panel, datas);
-        });
-        panel.updateButton.addActionListener(e -> {
             try {
-                updateProduct(datas, dao, ProgramManager.getInstance().getPC().bufferedString);
+                ProgramManager.getInstance().getPC().addProduct();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             } catch (ClassNotFoundException classNotFoundException) {
                 classNotFoundException.printStackTrace();
             }
-        });
+        }); //상품등록 버튼 리스너
+        panel.searchButton.addActionListener(e -> {
+            try {
+                ProgramManager.getInstance().getPC().searchProduct(dao, panel.editMode, panel);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            } catch (ClassNotFoundException classNotFoundException) {
+                classNotFoundException.printStackTrace();
+            }
+            panel.editMode = true;
+        }); //검색 버튼 리스너
+        panel.deleteButton.addActionListener(e -> {
+            try {
+                ProgramManager.getInstance().getPC().deleteProduct(panel);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            } catch (ClassNotFoundException classNotFoundException) {
+                classNotFoundException.printStackTrace();
+            }
+        }); //삭제버튼 리스너
+        panel.updateButton.addActionListener(e -> {
+            try {
+                ProgramManager.getInstance().getPC().updateProduct();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            } catch (ClassNotFoundException classNotFoundException) {
+                classNotFoundException.printStackTrace();
+            }
+        }); // 수정버튼 리스너
 
         panel.productTable.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
                     ProgramManager.getInstance().getPC().isClick =true;
-                    ProgramManager.getInstance().getPC().appMain();
+                    ProgramManager.getInstance().getPC().appMain();  //클릭한 상품의 Pr코드 넣기
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 } catch (ClassNotFoundException classNotFoundException) {
@@ -167,118 +161,8 @@ public class mmsListener {
             public void mouseReleased(MouseEvent e) { }
             public void mouseEntered(MouseEvent e) { }
             public void mouseExited(MouseEvent e) { }
-        });
+        }); // 수정버튼에 사용할 마우스 리스너
     } //ProductViewPaneListener
-    //ProductViewPanelListener Method //메소드/////////////////
-
-    ///여기
-    public void deleteProduct(ProductDAO dao, boolean editMode, ProductViewPanel panel, ArrayList<ProductDTO> datas){
-        String add_msg="";
-        int row = ViewManager.getInstance().getMainView().productViewPanel.productTable.getSelectedRow();
-        if(row == -1 ){
-            JOptionPane.showMessageDialog(ViewManager.getInstance().getMainView().productViewPanel, " 삭제할 정보를 조회 후 선택해 주세요.");
-
-        }else {
-            int prCode = Integer.parseInt(ViewManager.getInstance().getMainView().productViewPanel.tableModel.getValueAt(row, 0).toString());
-            add_msg = add_msg + "delete from Product where pr_code = " + prCode;
-        }
-
-        ProgramManager.getInstance().getMainController().msgSend(new Message("", "", add_msg, 7));
-
-        panel.SUDLab.setText("검색 정보 :");
-    }//테이블 누르고 삭제
-    //여기
-
-
-    public void searchProduct(ProductDAO dao, boolean editMode,ProductViewPanel panel){
-        try {
-
-            ProductDTO p = dao.getProduct(Integer.parseInt(panel.txtSearch.getText()));
-            if (p.getPrCode() != -1) {
-                System.out.println(p.getPrCode());
-                panel.SUDtxt.setText("");
-                panel.SUDtxt.append("코드\t이름\t가격\t위치\t유통기한\t재고\t상태\n" +
-                        Integer.toString(p.getPrCode()) + "\t" + p.getPrName() + "\t" + p.getPrice() + "\t" + p.getLocation() + "\t" + p.getExpDate() + "\t" + p.getAmount() + "\t"
-                        + p.getState());
-                ;
-
-                editMode = true; //찾았으면 수정,삭제가능
-            } else {
-
-                System.out.println(p.getPrCode());
-                panel.SUDtxt.setText("검색하는 코드에 대한 정보가 없음");
-            }
-
-        } catch (SQLException | ClassNotFoundException throwables) {
-            throwables.printStackTrace();
-        }
-
-
-        panel.SUDLab.setText("검색 정보 :                                                         EditMode : " + editMode);
-    }//search한후 텍스트area에 정보띄우기
-
-    public void addProduct(){
-        ViewManager.getInstance().getProductCRUDView().drawView();
-        ViewManager.getInstance().getProductCRUDView().chk = 1;
-    } //CRUD창 추가후 버튼리스너 추가
-    public void refreshData (ArrayList<ProductDTO> datas, ProductDAO dao, ProductViewPanel panel)throws SQLException, ClassNotFoundException {
-
-        datas = dao.getAll();
-        Object record[] = new Object[7];
-        panel.tableModel.setNumRows(0); // 다시붙일때 테이블 로우 초기화
-
-        System.out.println("여기냐?");
-        if( datas != null){
-
-            for(ProductDTO p : datas) {
-                record[0] = p.getPrCode();
-                record[1] = p.getPrName();
-                record[2] = p.getPrice();
-                record[3] = p.getLocation();
-                record[4] = p.getExpDate();
-                record[5] = p.getAmount();
-                record[6] = p.getState();
-                panel.tableModel.addRow(record);
-
-                System.out.println("안되지!?");
-            }
-
-        }
-    }
-    public void updateProduct(ArrayList<ProductDTO> datas, ProductDAO dao, int bufferedString ) {
-
-        int row = ViewManager.getInstance().getMainView().productViewPanel.productTable.getSelectedRow();
-        if(row == -1 ) {
-            JOptionPane.showMessageDialog(ViewManager.getInstance().getMainView().productViewPanel, "수정할 정보를 선택해 주세요.");
-        } else {
-            int prcode = Integer.parseInt((ViewManager.getInstance().getMainView().productViewPanel.tableModel.getValueAt(row, 0).toString()));
-            String prName = (String)ViewManager.getInstance().getMainView().productViewPanel.tableModel.getValueAt(row, 1);
-            int price = Integer.parseInt(ViewManager.getInstance().getMainView().productViewPanel.tableModel.getValueAt(row, 2).toString());
-            String location = (String)ViewManager.getInstance().getMainView().productViewPanel.tableModel.getValueAt(row, 3);
-            Date date = Date.valueOf(ViewManager.getInstance().getMainView().productViewPanel.tableModel.getValueAt(row, 4).toString());
-            int amount = Integer.parseInt(ViewManager.getInstance().getMainView().productViewPanel.tableModel.getValueAt(row, 5).toString());
-            String state = (String)ViewManager.getInstance().getMainView().productViewPanel.tableModel.getValueAt(row, 6);
-
-
-            String prstate = (String)ViewManager.getInstance().getMainView().productViewPanel.tableModel.getValueAt(row, 6);;
-
-            DefaultTableModel dt = ViewManager.getInstance().getMainView().productViewPanel.tableModel;
-
-            String add_msg = "update Product set pr_name = " + "'" + prName + "'" +
-                    ",  PRICE = "+ price + ", location = "+ "'" + location +"'" +
-                    ", exp_date = "+ "'" + date + "'" + ", amount = "+ amount + ", state = "+ "'" + prstate + "'" + "where pr_code = " + prcode;
-
-
-
-
-            ProgramManager.getInstance().getMainController().msgSend(new Message("", "", add_msg, 6));
-
-            ViewManager.getInstance().getMainView().productViewPanel.SUDtxt.setText("수정이 완료되었습니다.");
-        }
-    }
-
-
-
 
     public void orderListViewPanelListener(OrderListViewPanel panel){
 
@@ -287,26 +171,27 @@ public class mmsListener {
         });
 
     }
-    public void customerViewPanelListener(CustomerViewPanel panel){
 
-        panel.addButton.addActionListener(e -> {
+    public void customerViewPanelListener(CustomerViewPanel panel){ // customerVuewPanel의 각 버튼의 특정 역할의 리스너 부착
+
+        panel.addButton.addActionListener(e -> { //CustomerPanel의 등록 버튼을 누르면 고객 등록 창을 띄워준다.
             CustomerManageView cmv = ProgramManager.getInstance().getCC().makeCustomerManageView();
             customerManageViewListener(cmv);
         });
-        panel.searchButton.addActionListener(e -> {
+        panel.searchButton.addActionListener(e -> { // 조회 버튼을 누르면 조회해주는 메서드 실행
             ProgramManager.getInstance().getCC().search = true;
             ProgramManager.getInstance().getCC().appMain();
         });
-        panel.updateButton.addActionListener(e -> {
+        panel.updateButton.addActionListener(e -> { // 수정 버튼을 누르면 수정해주는 메서드 실행
             ProgramManager.getInstance().getCC().update = true;
             ProgramManager.getInstance().getCC().appMain();
         });
-        panel.deleteButton.addActionListener(e -> {
+        panel.deleteButton.addActionListener(e -> { // 삭제 버튼을 누르면 삭제해주는 메서드 실행
             ProgramManager.getInstance().getCC().delete =true;
             ProgramManager.getInstance().getCC().appMain();
         });
 
-        panel.tblCustomerList.addMouseListener(new MouseListener() {
+        panel.tblCustomerList.addMouseListener(new MouseListener() { // customerViewPanel에 부착된 Table이 클릭됐다면 해당 행의 폰 번호를 저장해주는 메서드 실행
             @Override
             public void mouseClicked(MouseEvent e) {
                 ProgramManager.getInstance().getCC().isClick =true;
@@ -320,78 +205,24 @@ public class mmsListener {
     }
 
     public void productCRUDViewListener(ProductCRUDView frame){
-        ProductDAO dao=new ProductDAO();
-        ArrayList<ProductDTO> datas = new ArrayList<ProductDTO>();
-
         frame.completeButton.addActionListener(e -> {
             if(frame.chk==1)
                 try {
-                    addProduct_inCRUD(frame, dao, ViewManager.getInstance().getMainView().productViewPanel.editMode, datas);
+                    ProgramManager.getInstance().getPC().addProduct_inCRUD(frame); //상품등록하기
                 }catch (Exception e1){}
         });
     }//productCRUDViewListener
 
-    //productCRUDViewListener Method CRUD패널 메소드 ////////////////////
-    public void addProduct_inCRUD(ProductCRUDView CRUDv, ProductDAO dao, boolean editMode, ArrayList<ProductDTO> datas) throws SQLException, ClassNotFoundException {
-
-        String add_msg="insert into Product(pr_code, pr_name, price, location, exp_date, amount, state) ";
-        String prstate = "판매";
-
-
-        add_msg += "values(" + Integer.parseInt(CRUDv.codeText.getText()) +
-                ", " + "'"+ CRUDv.nameText.getText() +"'"+
-                ", " + Integer.parseInt(CRUDv.priceText.getText()) +
-                ", " + "'" + CRUDv.locationText.getText() +"'"+
-                ", " + "'" + CRUDv.expDateText.getText() + "'" +
-                ", " + Integer.parseInt(CRUDv.countText.getText()) +
-                ", " + "'"+ prstate + "'"+")";
-
-
-        System.out.println("상품등록 완료");
-        CRUDv.codeText.setText("");
-        CRUDv.nameText.setText("");
-        CRUDv.priceText.setText("");
-        CRUDv.locationText.setText("");
-        CRUDv.expDateText.setText("");
-        CRUDv.countText.setText("");
-
-
-
-
-        ProgramManager.getInstance().getMainController().msgSend(new Message("", "", add_msg, 5));
-
-
-        ViewManager.getInstance().getMainView().productViewPanel.SUDLab.setText("검색 정보 :                                                      ");
-
-    } //addProduct_inCRUD complete누르면 정보 추가
-    //메소드///////////////////////////////
-
-
-
     public void shoppingViewListener(ShoppingView frame){
 
-        /*
-        for (ActionListener al : frame.btnEnter.getActionListeners()) {
-            frame.btnEnter.removeActionListener(al);
-        }
-        for (ActionListener al : frame.btnEnroll.getActionListeners()) {
-            frame.btnEnter.removeActionListener(al);
-        }
-        for (ActionListener al : frame.btnPay.getActionListeners()) {
-            frame.btnEnter.removeActionListener(al);
-        }
-        for (ActionListener al : frame.btnDelete.getActionListeners()) {
-            frame.btnEnter.removeActionListener(al);
-        }*/
-
-        frame.btnEnter.addActionListener(e -> {
+        frame.btnEnter.addActionListener(e -> { // 쇼핑하기 버튼을 처음 눌렀을 경우에 나타나는 고객 정보 입력 창에서 엔터 버튼을 눌렀을 경우 쇼핑 창으로 이동하는 이벤트
 
             String name = frame.txtName.getText();
             String phone = frame.txtPhone.getText();
 
             if(name != null && phone != null) {
                 try {
-                    ProgramManager.getInstance().getShoppingController().refreshData(frame);
+                    ProgramManager.getInstance().getShoppingController().refreshData(frame); // 구매가능한 품목들 화면에 리프레쉬
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 } catch (ClassNotFoundException e2) {
@@ -408,9 +239,9 @@ public class mmsListener {
 
         });
 
-        frame.btnEnroll.addActionListener(e -> {
+        frame.btnEnroll.addActionListener(e -> { // 쇼핑화면에서 장바구니에 원하는 물품을 담을 때(담기 버튼) 행해지는 이벤트
             try {
-                ProgramManager.getInstance().getShoppingController().addMyList(frame);
+                ProgramManager.getInstance().getShoppingController().addMyList(frame); // 쇼핑화면의 MyList 내역에 추가됨
             } catch (SQLException e1) {
                 e1.printStackTrace();
             } catch (ClassNotFoundException e2) {
@@ -418,10 +249,10 @@ public class mmsListener {
             }
         });
 
-        frame.btnPay.addActionListener(e -> {
+        frame.btnPay.addActionListener(e -> { // 쇼핑화면에서 결제하기 버튼을 눌렀을 때 행해지는 이벤트
 
             try {
-                ProgramManager.getInstance().getShoppingController().payment(frame); // 여기를 통과해야 되게끔..
+                ProgramManager.getInstance().getShoppingController().payment(frame); // 구매 msg를 서버로 보내는 함수를 호출
             } catch (SQLException e1) {
                 e1.printStackTrace();
             } catch (ClassNotFoundException e2) {
@@ -429,9 +260,9 @@ public class mmsListener {
             }
         });
 
-        frame.btnDelete.addActionListener(e -> {
+        frame.btnDelete.addActionListener(e -> { // 쇼핑화면에서 삭제하기 버튼을 눌렀을 때 행해지는 이벤트
             try {
-                ProgramManager.getInstance().getShoppingController().deleteMy(frame);
+                ProgramManager.getInstance().getShoppingController().deleteMy(frame); // 가장 최근에 넣은 품목 삭제
             } catch (SQLException e1) {
                 e1.printStackTrace();
             } catch (ClassNotFoundException e2) {
@@ -442,23 +273,23 @@ public class mmsListener {
 
     }
 
-    public void customerManageViewListener(CustomerManageView frame){
+    public void customerManageViewListener(CustomerManageView frame){ // 고객 등록 창의 각 버튼에 특정 역할을 부여하는 리스너 등록
 
-        frame.btnRegister.addActionListener(e -> {
+        frame.btnRegister.addActionListener(e -> { // 등록 버튼을 누르면 입력된 정보로 고객 신규 등록하는 메서드 실행
             ViewManager.getInstance().setCustomerManageView(frame);
             ProgramManager.getInstance().getCC().register =true;
             ProgramManager.getInstance().getCC().appMain();
         });
-        frame.btnExit.addActionListener(e -> {
+        frame.btnExit.addActionListener(e -> { // 창 닫기 메서드 실행
             frame.dispose();
         });
     }
 
-    public void chattingViewListener(ChattingView frame) {
-        frame.exitButton.addActionListener(e-> {
+    public void chattingViewListener(ChattingView frame) { // 채팅 창의 각 버튼에 특정 역할을 부여해주는 리스너 등록
+        frame.exitButton.addActionListener(e-> { // 채팅 창 닫기 메서드 실행
             ProgramManager.getInstance().getChattingController().exitChatting();
         });
-        frame.msgInput.addActionListener((e -> {
+        frame.msgInput.addActionListener((e -> { // 메시지 보내기 메서드 실행
             ProgramManager.getInstance().getChattingController().sendTextMessage(ProgramManager.getInstance().id + "/" + frame.msgInput.getText());
             ViewManager.getInstance().getChattingView().msgInput.setText("");
         }));

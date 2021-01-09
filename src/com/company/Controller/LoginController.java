@@ -1,33 +1,33 @@
 package com.company.Controller;
 
-import com.company.Model.AccountDAO;
-import com.company.Model.AccountDTO;
 import com.company.Model.Message;
-import com.google.gson.Gson;
+import com.company.View.JoinView;
+import com.company.View.LoginViewPanel;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.ArrayList;
+import javax.swing.*;
 
 public class LoginController{
-    AccountDAO adao = new AccountDAO();
-    AccountDTO adto;
-    public boolean loginSuccess(String id, String pw) {
-        ArrayList<AccountDTO> accountList = adao.getAll();
-        for(AccountDTO account : accountList) {
-            System.out.println("Check");
-            if( account.getId().equals(id) ) {
-                if (account.getPassword().equals(pw)) {
-                    System.out.println("로그인에 성공하였습니다!");
-                    return true;
-                } else {
-                    System.out.println("비밀번호가 틀렸습니다.");
-                    return false;
-                }
-            }
+
+    public void login(LoginViewPanel panel) { // 입력된 계정으로 로그인 해달라고 서버에 메시지 보내기
+        String id = panel.txtId.getText();
+        String pw = panel.txtPw.getText();
+        String msg = "select * from Accounts where id = "
+                + "'" + id + "'" + "and passwd = " + "'" + pw + "'";
+        ProgramManager.getInstance().getMainController().msgSend(new Message(id, pw, msg, 2));
+    }
+
+    public void join(JoinView frame) { // 입력된 문자열로 계정을 만들어 달라고 서버에 메시지 보내기
+        String id = frame.txtId.getText();
+        String pw = frame.txtPw.getText();
+        String name = frame.txtName.getText();
+        String msg= "insert into Accounts(id, passwd, user_name, is_login) values('"
+                + id + "', '" + pw + "', '" + name + "', " + 0 + ")";
+        if(id != null && pw != null && name != null) {
+            ProgramManager.getInstance().getMainController().msgSend(new Message(id, pw, msg, 1));
+            frame.dispose();
         }
-        System.out.println("입력하신 아이디는 없는 아이디입니다.");
-        return false;
+        else {
+            JOptionPane.showMessageDialog(frame, "잘못된 양식입니다.");
+        }
     }
 }

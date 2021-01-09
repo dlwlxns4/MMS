@@ -3,16 +3,13 @@ package com.company.View;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
+// 사용하지 않은 클래스
 public class ShoppingLogin extends JFrame {
     JLabel lblName, lblPhone;
     JTextField txtName, txtPhone;
     JButton btnEnter;
 
-    public static void main(String[] args) {
-        new ShoppingLogin().drawView();
-    }
-
-    public ShoppingLogin() {
+    public ShoppingLogin() { // 장바구니 뷰 전에 고객 정보 입력하는 창 생성
         lblName = new JLabel("이름");
         lblPhone = new JLabel("휴대폰");
         btnEnter = new JButton("입장");
@@ -20,7 +17,7 @@ public class ShoppingLogin extends JFrame {
         txtPhone = new JTextField(10);
     }
 
-    public void drawView() {
+    public void drawView() { // 장바구니 뷰 전에 고객 정보 입력하는 창 그려주기
         setTitle("Shopping Login");
         setSize(400,550);
         setLayout(null);
@@ -40,9 +37,5 @@ public class ShoppingLogin extends JFrame {
         add(txtPhone);
 
         setVisible(true);
-    }
-
-    public void addEnterButtonListener(ActionListener listener) {
-        btnEnter.addActionListener(listener);
     }
 }
