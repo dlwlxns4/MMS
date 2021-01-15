@@ -12,7 +12,7 @@ MartManagementSystem
 ## 2. 전체 시스템 구조도
 
 ### 시스템 구조도
-![스크린샷 2021-01-15 12 25 05](https://user-images.githubusercontent.com/67869514/104677455-c6c66380-572c-11eb-9e6c-50b3c36070e4.png)
+![스크린샷 2021-01-15 12 28 56](https://user-images.githubusercontent.com/67869514/104677706-3e948e00-572d-11eb-86a0-6547641027c9.png)
 
 ###	Model
 -	Product : 상품 코드/이름/가격/위치/유통기한/수량/상태를 포함한 상품 정보
@@ -21,6 +21,15 @@ MartManagementSystem
 -	Order : 주문 코드/총 가격/고객 이름/휴대폰 번호/구매 날짜를 포함한 주문 정보
 -	OrderHistory : 내역 코드/주문 코드/상품 코드/구매 개수/가격을 포함한 주문 내역 정보
 
+### MVC 패턴 기반의 서버-클라이언트 구조로 구현
+
+1.서버 
+클라이언트들의 접속을 받고 관리 및 동기화 수행
+AWS를 통해 원격으로 DB를 관리하고 클라이언트와 메세지를 주고 받으며 이벤트를 처리
+
+2.클라이언트 
+서버에 연결 요청
+뷰와 컨트롤러로 구성되어 있으며 서버와 메세지를 주고 받으며 이벤트를 처리
 
 ###	View
 -	Admin View : 관리자 및 직원이 볼 수 있는 화면
@@ -32,17 +41,38 @@ MartManagementSystem
 -	Shopping View : 현재 구매하는 주문 정보 화면
 
 ###	Controller
+
 -	Log-in & Join : 시스템 로그인 및 회원가입 기능
 -	Alert small quantity product : 상품 품목의 20% 미만인 제품을 알려주는 기능
 -	Alert expired products : 유통기한이 임박한 제품을 행사상품으로 바꾸고 기한이 만료된 상품을 알려주는 기능
 -	Message send & receive : 관리자와 직원의 채팅 기능
 
 
-## 3. 주요 기능 스펙
+## 3. 주요 기능 및 스펙
+### 기능
 -	로그인 및 회원가입 : 시스템에 회원가입하고 로그인 하는 기능
 -	관리자-직원간 채팅 : 멀티 쓰레드를 이용하여 관리자와 직원 사이에의 채팅 기능
 -	행사 상품 전환 : 유통기한이 임박한 상품을 행사 상품으로 전환하는 기능
 -	폐기 상품 알림 : 유통기한이 만료된 상품을 알리는 기능
 -	재고 관리 : 특정 품목을 추가/삭제/수정할 수 있는 기능
 -	장바구니 화면 : 고객이 현재 무슨 상품을 구매하는지 확인하는 기능
+
+### 기술
+- MVC 패턴 적용
+- State 패턴 적용
+- 싱글톤 패턴 적용
+- Data Base는 AWS의 RDS를 사용
+- Multi Thread와 Socket을 이용하여 Server-Client 구조의 시스템 구성
+
+## 4. 클래스 구성 , UML
+![스크린샷 2021-01-15 12 31 35](https://user-images.githubusercontent.com/67869514/104677891-9d5a0780-572d-11eb-945f-52ee07038da4.png)
+
+
+### State UML
+![KakaoTalk_Photo_2021-01-15-12-35-05](https://user-images.githubusercontent.com/67869514/104678243-54ef1980-572e-11eb-93e0-8e8b0ca743f8.png)
+
+
+### View UML
+![KakaoTalk_Photo_2021-01-15-12-33-27](https://user-images.githubusercontent.com/67869514/104678084-03468f00-572e-11eb-843d-7c4aecb7b185.png)
+
 
